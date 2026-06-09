@@ -67,6 +67,33 @@ The demo account is guarded against deletion so it stays available for everyone.
 
 ---
 
+## Pitch deck
+
+A self-contained, on-brand investor/partner deck — *"gold seams on dark,"* echoing the kintsugi metaphor.
+
+- **[View the deck (PDF) →](docs/pitch-deck.pdf)** · interactive HTML: [docs/pitch-deck.html](docs/pitch-deck.html)
+- **13 slides:** problem → brand insight → solution → investigation loop → product → differentiation → personas → market & why-now → business model → moat → traction → the ask.
+- **Positioning one-liner:** *Kintsugi turns your scattered health data into understanding you own — investigation, not diagnosis.*
+
+## Explainer video
+
+A ~55-second narrated, animated explainer (1080p) — neutral English voiceover for a global audience, professionally animated transitions, and real product footage.
+
+<p align="center">
+  <a href="docs/explainer.mp4">
+    <img src="docs/assets/explainer-poster.png" alt="Watch the Kintsugi Health OS explainer" width="900">
+  </a>
+</p>
+
+<p align="center">
+  <a href="docs/explainer.mp4"><strong>▶ Watch the explainer (MP4)</strong></a>
+  &nbsp;·&nbsp; script &amp; storyboard: <a href="docs/explainer-script.md">docs/explainer-script.md</a>
+</p>
+
+> Brand note: *Kintsugi (金継ぎ)* — mending what's broken with gold. Category position: **"Investigation, not diagnosis"** — calm, credible, patient-owned, anti-anxiety.
+
+---
+
 ## Project phases
 
 How this came together. The public build is a live, sanitized **synthetic-data** version of the product — see [Try the live demo](#try-the-live-demo).
@@ -228,31 +255,6 @@ See [docs/10-security-design.md](docs/10-security-design.md), [docs/16-complianc
 New Investigation Packs are added as self-contained modules implementing a `PackDefinition` (metrics + deterministic index formulas), then registered and surfaced in the marketplace. Packs pass a safety review gate before being marked verified. See [docs/27-pack-sdk.md](docs/27-pack-sdk.md).
 
 ---
-
-## Pitch deck
-
-A self-contained, on-brand investor/partner deck — *"gold seams on dark,"* echoing the kintsugi metaphor.
-
-- **[View the deck (PDF) →](docs/pitch-deck.pdf)** · interactive HTML: [docs/pitch-deck.html](docs/pitch-deck.html)
-- **13 slides:** problem → brand insight → solution → investigation loop → product → differentiation → personas → market & why-now → business model → moat → traction → the ask.
-- **Positioning one-liner:** *Kintsugi turns your scattered health data into understanding you own — investigation, not diagnosis.*
-
-## Explainer video
-
-A ~50-second narrated, animated explainer (1080p) — neutral English male voiceover, professionally animated transitions, and real product footage.
-
-<p align="center">
-  <a href="docs/explainer.mp4">
-    <img src="docs/assets/explainer-poster.png" alt="Watch the Kintsugi Health OS explainer" width="900">
-  </a>
-</p>
-
-<p align="center">
-  <a href="docs/explainer.mp4"><strong>▶ Watch the explainer (MP4)</strong></a>
-  &nbsp;·&nbsp; script &amp; storyboard: <a href="docs/explainer-script.md">docs/explainer-script.md</a>
-</p>
-
-> Brand note: *Kintsugi (金継ぎ)* — mending what's broken with gold. Category position: **"Investigation, not diagnosis"** — calm, credible, patient-owned, anti-anxiety.
 
 ## Documentation
 
