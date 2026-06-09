@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "verify:guardrails": "tsx scripts/verify-detective.ts"
+    "verify:guardrails": "tsx scripts/verify-detective.ts",
+    "verify:m5": "tsx scripts/e2e-m5.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
