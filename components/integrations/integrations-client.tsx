@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Activity, Check, Link2, Upload } from "lucide-react";
+import { Activity, Check, Link2, Upload, Wand2 } from "lucide-react";
+import { sampleFor } from "@/lib/integrations/samples";
+import type { IntegrationProvider } from "@/types/canonical";
 
 interface Provider {
   provider: string;
@@ -115,7 +117,8 @@ export function IntegrationsClient({ providers }: { providers: Provider[] }) {
                     {syncFor === p.provider ? (
                       <div className="space-y-2">
                         <p className="text-xs text-muted-foreground">
-                          Paste a {p.label} daily-summary JSON payload (or an array of days).
+                          No device? Load 7 days of realistic sample data, or paste a {p.label} daily-summary
+                          JSON payload (or an array of days).
                         </p>
                         <textarea
                           className="h-28 w-full rounded-md border bg-background p-2 font-mono text-xs"
@@ -123,7 +126,14 @@ export function IntegrationsClient({ providers }: { providers: Provider[] }) {
                           onChange={(e) => setPayload(e.target.value)}
                           placeholder='{"day":"2026-06-09","score":82,"total_sleep_duration":27000}'
                         />
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setPayload(JSON.stringify(sampleFor(p.provider as IntegrationProvider), null, 2))}
+                          >
+                            <Wand2 className="h-4 w-4" /> Load sample
+                          </Button>
                           <Button size="sm" onClick={() => sync(p.provider)} disabled={busy === p.provider}>
                             <Upload className="h-4 w-4" /> Sync
                           </Button>
@@ -146,8 +156,9 @@ export function IntegrationsClient({ providers }: { providers: Provider[] }) {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Live OAuth sync requires per-provider API credentials. The adapters and canonical pipeline are
-        fully wired; once credentials are configured, scheduled sync will use the same path.
+        No wearable yet? Connect any provider and use <span className="font-medium">Load sample</span> to push 7 days
+        of realistic data through the pipeline - it lands in your canonical metrics and recomputes your indices.
+        Live OAuth sync (automatic background pulls) requires per-provider API credentials and uses this same path.
       </p>
     </main>
   );
