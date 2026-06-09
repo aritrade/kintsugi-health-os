@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { BiologicalSex, DerivedIndex } from "@/types";
-import type { CheckinPayload } from "@/types/checkin";
+import type { CheckinCore, CheckinPayload } from "@/types/checkin";
 import { getPack } from "@/packs/registry";
 import { getActivePackMetrics } from "@/server/packs/active";
 import { BASELINE_MIN_OBSERVATIONS } from "@/packs/normalize";
@@ -31,6 +31,16 @@ const CORE_COLUMN_MAP: Record<string, string> = {
   nicotine: "nicotine",
   caffeineMg: "caffeine_mg",
 };
+
+// Reverse of CORE_COLUMN_MAP: maps a fetched snake_case checkins row to CheckinCore.
+function mapCoreRow(row: Record<string, unknown>): CheckinCore {
+  const core: Record<string, unknown> = {};
+  for (const [key, column] of Object.entries(CORE_COLUMN_MAP)) {
+    const v = row[column];
+    if (v !== undefined && v !== null) core[key] = v;
+  }
+  return core as CheckinCore;
+}
 
 export interface SaveCheckinResult {
   checkin: Record<string, unknown>;
@@ -113,16 +123,28 @@ export async function recomputeIndicesForDate(
     valueBool: e.value_bool ?? undefined,
   }));
 
+  // Load the day's core check-in - several indices (Sleep, Recovery, Confidence)
+  // are computed from these fields, not from pack metric entries.
+  const { data: coreRow } = await supabase
+    .from("checkins")
+    .select(Object.values(CORE_COLUMN_MAP).join(", "))
+    .eq("user_id", userId)
+    .eq("checkin_date", date)
+    .maybeSingle();
+  const core: CheckinCore | null = coreRow ? mapCoreRow(coreRow as unknown as Record<string, unknown>) : null;
+
   const computed: DerivedIndex[] = [];
   for (const pack of activePacks) {
     const def = getPack(pack.packSlug);
     if (!def) continue;
     const packSlugs = new Set(pack.metrics.map((m) => m.slug));
     const packEntries = metricEntries.filter((e) => packSlugs.has(e.metricSlug));
-    if (packEntries.length === 0) continue;
 
     for (const index of def.indices) {
-      const value = index.compute({ metricEntries: packEntries, windowDays: 1 });
+      // Skip indices scoped to a different biological sex.
+      if (index.sexScope && index.sexScope !== biologicalSex) continue;
+      const value = index.compute({ metricEntries: packEntries, core, windowDays: 1 });
+      if (value == null) continue; // too few inputs to compute
       const { data: saved, error: upErr } = await supabase
         .from("derived_indices")
         .upsert(
@@ -132,7 +154,10 @@ export async function recomputeIndicesForDate(
             index_slug: "default",
             index_date: date,
             value,
-            inputs: Object.fromEntries(packEntries.map((e) => [e.metricSlug, e.valueNum ?? e.valueBool])),
+            inputs: {
+              ...(core ?? {}),
+              ...Object.fromEntries(packEntries.map((e) => [e.metricSlug, e.valueNum ?? e.valueBool])),
+            },
           },
           { onConflict: "user_id,index_kind,index_slug,index_date" },
         )

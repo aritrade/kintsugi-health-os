@@ -158,10 +158,16 @@ export default async function DashboardPage() {
         <div className="grid gap-3">
           {(activations ?? []).map((a, i) => {
             const pack = a.pack_definitions as unknown as { name: string; slug: string } | null;
+            if (!pack) return null;
             return (
-              <Card key={pack?.slug ?? i}>
-                <CardContent className="py-4 text-sm font-medium">{pack?.name ?? "Pack"}</CardContent>
-              </Card>
+              <Link key={pack.slug ?? i} href={`/packs/${pack.slug}`}>
+                <Card className="transition-colors hover:bg-muted">
+                  <CardContent className="flex items-center justify-between py-4 text-sm font-medium">
+                    {pack.name}
+                    <span className="text-xs font-normal text-muted-foreground">View indices &rarr;</span>
+                  </CardContent>
+                </Card>
+              </Link>
             );
           })}
           {(activations ?? []).length === 0 && (

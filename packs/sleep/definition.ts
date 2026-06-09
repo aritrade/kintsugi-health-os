@@ -1,8 +1,17 @@
 import type { PackDefinition } from "@/types/packs";
-import { normScale, weightedAverage } from "@/packs/normalize";
+import {
+  normScale,
+  normInverse,
+  scoreSleepDuration,
+  scoreAwakenings,
+  penaltyDryMouthSnoring,
+  weightedAverage,
+} from "@/packs/normalize";
 
-// Sleep Pack. Metrics + Sleep/Recovery indices.
-// Formulas: docs/20-index-formulas.md sections 2.1, 2.2.
+// Sleep Pack. Sleep Score + Recovery Score.
+// Formulas: docs/20-index-formulas.md sections 2.1, 2.2 (inputs from the core
+// daily check-in: sleep_quality, sleep_duration_min, night_awakenings,
+// dry_mouth, snoring, energy, recovery, fatigue).
 export const sleepPack: PackDefinition = {
   slug: "sleep",
   name: "Sleep Pack",
@@ -17,16 +26,41 @@ export const sleepPack: PackDefinition = {
     {
       indexKind: "sleep_score",
       label: "Sleep Score",
-      compute: (input) => {
-        const quality = input.metricEntries.find((m) => m.metricSlug === "sleep_quality")?.valueNum;
-        const score = weightedAverage([
-          { value: quality !== undefined ? normScale(quality) : undefined, weight: 1 },
+      // 0.40*quality + 0.30*duration + 0.20*awakenings + 0.10*dryMouth/snoring penalty
+      compute: ({ core }) => {
+        if (!core) return null;
+        return weightedAverage([
+          { value: core.sleepQuality != null ? normScale(core.sleepQuality) : undefined, weight: 0.4 },
+          { value: core.sleepDurationMin != null ? scoreSleepDuration(core.sleepDurationMin) : undefined, weight: 0.3 },
+          { value: core.nightAwakenings != null ? scoreAwakenings(core.nightAwakenings) : undefined, weight: 0.2 },
+          {
+            value:
+              core.dryMouth != null || core.snoring != null
+                ? penaltyDryMouthSnoring(core.dryMouth, core.snoring)
+                : undefined,
+            weight: 0.1,
+          },
         ]);
-        return score ?? 0;
+      },
+    },
+    {
+      indexKind: "recovery_score",
+      label: "Recovery Score",
+      // 0.40*energy + 0.40*recovery + 0.20*fatigue(inverse)
+      compute: ({ core }) => {
+        if (!core) return null;
+        return weightedAverage([
+          { value: core.energy != null ? normScale(core.energy) : undefined, weight: 0.4 },
+          { value: core.recovery != null ? normScale(core.recovery) : undefined, weight: 0.4 },
+          { value: core.fatigue != null ? normInverse(core.fatigue) : undefined, weight: 0.2 },
+        ]);
       },
     },
   ],
   dashboard: {
-    cards: [{ indexKind: "sleep_score", title: "Sleep Score", chart: "line" }],
+    cards: [
+      { indexKind: "sleep_score", title: "Sleep Score", chart: "line" },
+      { indexKind: "recovery_score", title: "Recovery Score", chart: "line" },
+    ],
   },
 };
