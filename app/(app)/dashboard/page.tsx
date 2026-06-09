@@ -197,6 +197,38 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
         </Link>
+        <Link href="/integrations">
+          <Card className="h-full transition-colors hover:bg-muted">
+            <CardContent className="py-4">
+              <p className="font-medium">Integrations</p>
+              <p className="text-sm text-muted-foreground">Wearables &amp; apps</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/explore">
+          <Card className="h-full transition-colors hover:bg-muted">
+            <CardContent className="py-4">
+              <p className="font-medium">Explore Packs</p>
+              <p className="text-sm text-muted-foreground">Marketplace</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/assistant">
+          <Card className="h-full transition-colors hover:bg-muted">
+            <CardContent className="py-4">
+              <p className="font-medium">Assistant</p>
+              <p className="text-sm text-muted-foreground">Historian &amp; research</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/graph">
+          <Card className="h-full transition-colors hover:bg-muted">
+            <CardContent className="py-4">
+              <p className="font-medium">Knowledge Graph</p>
+              <p className="text-sm text-muted-foreground">How metrics connect</p>
+            </CardContent>
+          </Card>
+        </Link>
       </section>
 
       <section className="space-y-3">

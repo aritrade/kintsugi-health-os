@@ -3,6 +3,7 @@
 
 import type { BiologicalSex, IndexKind, MetricKind, Profile, Sensitivity } from "./index";
 import type { CheckinCore } from "./checkin";
+import type { CanonicalMetric } from "./canonical";
 
 export interface PackMetricDefinition {
   slug: string;
@@ -30,6 +31,9 @@ export interface IndexComputeInput {
   // Core daily check-in fields for the day (from the checkins table). Several
   // indices (Sleep, Recovery, Confidence) are computed from these.
   core: CheckinCore | null;
+  // Latest canonical metric values for the day (device/lab/manual), source-agnostic
+  // (docs/22). Body / BP / activity indices prefer these when present.
+  canonical?: Partial<Record<CanonicalMetric, number>>;
   windowDays: number;
 }
 

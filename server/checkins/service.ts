@@ -5,6 +5,8 @@ import { getPack } from "@/packs/registry";
 import { getActivePackMetrics } from "@/server/packs/active";
 import { BASELINE_MIN_OBSERVATIONS } from "@/packs/normalize";
 import { computeMomentum } from "@/server/momentum/engine";
+import { checkinToCanonical } from "@/server/canonical/from-checkin";
+import { ingestCanonical } from "@/server/canonical/ingest";
 
 // Maps the camelCase payload to the snake_case `checkins` columns.
 const CORE_COLUMN_MAP: Record<string, string> = {
@@ -95,6 +97,15 @@ export async function saveCheckin(
     }
   }
 
+  // Mirror manual fields into the canonical metric layer (Level C, docs/22 §5)
+  // so manual and device data are interchangeable inputs. Best-effort.
+  try {
+    const canonical = checkinToCanonical(payload, date);
+    if (canonical.length > 0) await ingestCanonical(supabase, userId, canonical);
+  } catch {
+    // non-critical
+  }
+
   const recomputedIndices = await recomputeIndicesForDate(supabase, userId, date, biologicalSex);
   // Momentum recompute runs alongside index recomputation (docs/25 section 7).
   // Best-effort: a momentum failure must never block a check-in save.
@@ -141,6 +152,21 @@ export async function recomputeIndicesForDate(
     .maybeSingle();
   const core: CheckinCore | null = coreRow ? mapCoreRow(coreRow as unknown as Record<string, unknown>) : null;
 
+  // Latest canonical metric value per key for the day (device/lab/manual), so
+  // body/BP/activity indices can prefer measured data (docs/22).
+  const { data: canonRows } = await supabase
+    .from("canonical_metric_values")
+    .select("metric, value, captured_at")
+    .eq("user_id", userId)
+    .gte("captured_at", `${date}T00:00:00Z`)
+    .lte("captured_at", `${date}T23:59:59Z`)
+    .order("captured_at", { ascending: false });
+  const canonical: Record<string, number> = {};
+  for (const r of canonRows ?? []) {
+    const key = r.metric as string;
+    if (!(key in canonical)) canonical[key] = Number(r.value);
+  }
+
   const computed: DerivedIndex[] = [];
   for (const pack of activePacks) {
     const def = getPack(pack.packSlug);
@@ -151,7 +177,7 @@ export async function recomputeIndicesForDate(
     for (const index of def.indices) {
       // Skip indices scoped to a different biological sex.
       if (index.sexScope && index.sexScope !== biologicalSex) continue;
-      const value = index.compute({ metricEntries: packEntries, core, windowDays: 1 });
+      const value = index.compute({ metricEntries: packEntries, core, canonical, windowDays: 1 });
       if (value == null) continue; // too few inputs to compute
       const { data: saved, error: upErr } = await supabase
         .from("derived_indices")

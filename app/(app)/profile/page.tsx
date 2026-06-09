@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 import { SignOutButton } from "@/components/sign-out-button";
 import { DataOwnership } from "@/components/account/data-ownership";
+import { FeedbackCard } from "@/components/feedback/feedback-card";
 
 const PRIVACY_LABELS: Record<string, string> = {
   standard: "Standard",
@@ -36,6 +38,19 @@ export default async function ProfilePage() {
           <Row label="Privacy mode" value={PRIVACY_LABELS[profile?.privacy_mode ?? "standard"]} />
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Connected apps</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm">
+          <Link href="/integrations" className="text-primary underline">
+            Manage wearables &amp; integrations
+          </Link>
+        </CardContent>
+      </Card>
+
+      <FeedbackCard />
 
       <DataOwnership />
 

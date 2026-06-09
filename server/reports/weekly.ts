@@ -7,11 +7,21 @@ import { applyGuardrails } from "@/ai/guardrails";
 
 const TRENDED_INDICES: IndexKind[] = [
   "sleep_score", "recovery_score", "libido", "sexual_confidence",
-  "erectile_function", "ejaculatory_control",
+  "erectile_function", "ejaculatory_control", "body_composition", "bp_control",
+  "thyroid_symptom_load", "mood_stability", "energy_stability", "longevity_score",
 ];
 
+export type ReportPeriod = "weekly" | "monthly" | "quarterly" | "annual";
+
+const PERIOD_CONFIG: Record<ReportPeriod, { windowDays: number; trendDays: number; label: string }> = {
+  weekly: { windowDays: 7, trendDays: 30, label: "Week" },
+  monthly: { windowDays: 30, trendDays: 90, label: "Month" },
+  quarterly: { windowDays: 90, trendDays: 180, label: "Quarter" },
+  annual: { windowDays: 365, trendDays: 365, label: "Year" },
+};
+
 export interface WeeklyReportContent {
-  period: "weekly";
+  period: ReportPeriod;
   periodStart: string;
   periodEnd: string;
   checkins: { days: number; completionRate: number };
@@ -20,6 +30,7 @@ export interface WeeklyReportContent {
   findings: string[];
   positives: string[];
   openQuestions: string[];
+  carryover: string[]; // open questions carried from the previous report (continuity)
   suggestedInvestigations: { label: string; templateId?: string }[];
   momentum: {
     score: number | null;
@@ -31,23 +42,33 @@ export interface WeeklyReportContent {
   };
 }
 
+// Backwards-compatible weekly wrapper.
 export async function buildWeeklyReport(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<WeeklyReportContent> {
+  return buildReport(supabase, userId, "weekly");
+}
+
+// Generic report generator for any cadence (docs/13 §2.6, docs/14 §2.4).
+export async function buildReport(
+  supabase: SupabaseClient,
+  userId: string,
+  period: ReportPeriod,
+): Promise<WeeklyReportContent> {
+  const cfg = PERIOD_CONFIG[period];
   const today = new Date();
   const periodEnd = today.toISOString().slice(0, 10);
-  const periodStart = new Date(today.getTime() - 7 * 86400000).toISOString().slice(0, 10);
-  const trendWindowStart = new Date(today.getTime() - 30 * 86400000).toISOString().slice(0, 10);
+  const periodStart = new Date(today.getTime() - cfg.windowDays * 86400000).toISOString().slice(0, 10);
 
-  // Check-in completion over the week.
+  // Check-in completion over the period window.
   const { data: weekCheckins } = await supabase
     .from("checkins")
     .select("checkin_date")
     .eq("user_id", userId)
     .gte("checkin_date", periodStart);
   const days = new Set((weekCheckins ?? []).map((r) => r.checkin_date as string)).size;
-  const completionRate = Math.round((Math.min(7, days) / 7) * 100);
+  const completionRate = Math.round((Math.min(cfg.windowDays, days) / cfg.windowDays) * 100);
 
   // Index trends (latest 7-day avg + change over the trailing window).
   const indexTrends: WeeklyReportContent["indexTrends"] = [];
@@ -108,8 +129,21 @@ export async function buildWeeklyReport(
     : null;
   const suggestedNextInvestigation = suggestedInvestigations[0]?.label ?? openQuestions[0] ?? null;
 
+  // Cross-report continuity: carry forward unanswered questions from the most
+  // recent prior report so longer-cadence reports build on earlier ones (docs/14 §2.4).
+  const { data: priorReport } = await supabase
+    .from("reports")
+    .select("content")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const priorOpen = ((priorReport?.content as { openQuestions?: string[] })?.openQuestions ?? []).filter(
+    (q) => !openQuestions.includes(q),
+  );
+
   const content: WeeklyReportContent = {
-    period: "weekly",
+    period,
     periodStart,
     periodEnd,
     checkins: { days, completionRate },
@@ -118,6 +152,7 @@ export async function buildWeeklyReport(
     findings,
     positives,
     openQuestions: dedupe(openQuestions),
+    carryover: dedupe(priorOpen),
     suggestedInvestigations,
     momentum: {
       score: momentum.score,

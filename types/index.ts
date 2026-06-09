@@ -42,6 +42,16 @@ export type IndexKind =
   | "anxiety"
   | "body_image"
   | "health_momentum"
+  | "body_composition"
+  | "thyroid_symptom_load"
+  | "bp_control"
+  | "cycle_regularity"
+  | "pcos_symptom_load"
+  | "fertility_readiness"
+  | "menopause_symptom_load"
+  | "energy_stability"
+  | "mood_stability"
+  | "longevity_score"
   | "custom";
 export type TimelineCategory =
   | "health"

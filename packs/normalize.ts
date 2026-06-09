@@ -16,13 +16,27 @@ export function normInverse(value: number): number {
   return 100 - normScale(value);
 }
 
-function clamp(n: number, lo = 0, hi = 100): number {
+export function clamp(n: number, lo = 0, hi = 100): number {
   return Math.max(lo, Math.min(hi, n));
 }
 
-function lerp(x: number, x0: number, x1: number, y0: number, y1: number): number {
+export function lerp(x: number, x0: number, x1: number, y0: number, y1: number): number {
   if (x1 === x0) return y0;
   return y0 + ((x - x0) / (x1 - x0)) * (y1 - y0);
+}
+
+// Score a value that has an ideal target band: full score inside [targetLow,
+// targetHigh], decaying linearly to 0 at the floor/ceiling. Used by body/BP/etc.
+export function scoreTargetBand(
+  value: number,
+  floorLow: number,
+  targetLow: number,
+  targetHigh: number,
+  ceilHigh: number,
+): number {
+  if (value >= targetLow && value <= targetHigh) return 100;
+  if (value < targetLow) return clamp(lerp(value, floorLow, targetLow, 0, 100));
+  return clamp(lerp(value, targetHigh, ceilHigh, 100, 0));
 }
 
 // --- Section 4: scoring non-scale numerics against tunable, non-diagnostic bands ---
@@ -54,6 +68,24 @@ export function scoreLatencyMinutes(minutes: number): number {
 // Erection duration (minutes) -> 0..100, relative self-trend only (not diagnostic).
 export function scoreErectionDurationMinutes(minutes: number): number {
   return clamp((minutes / 15) * 100);
+}
+
+// Read a numeric pack metric entry by slug.
+export function metricNum(
+  entries: Array<{ metricSlug: string; valueNum?: number; valueBool?: boolean }>,
+  slug: string,
+): number | undefined {
+  const v = entries.find((e) => e.metricSlug === slug)?.valueNum;
+  return typeof v === "number" ? v : undefined;
+}
+
+// Read a boolean pack metric entry by slug.
+export function metricBool(
+  entries: Array<{ metricSlug: string; valueNum?: number; valueBool?: boolean }>,
+  slug: string,
+): boolean | undefined {
+  const v = entries.find((e) => e.metricSlug === slug)?.valueBool;
+  return typeof v === "boolean" ? v : undefined;
 }
 
 // Average a list of contributions, ignoring undefined inputs and renormalizing weights.

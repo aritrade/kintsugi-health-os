@@ -33,6 +33,16 @@ const INDEX_VARS: VarDef[] = [
   { key: "recovery_score", label: "Recovery Score", direction: "up" },
   { key: "libido", label: "Libido Index", direction: "up" },
   { key: "sexual_confidence", label: "Sexual Confidence", direction: "up" },
+  { key: "erectile_function", label: "Erectile Function", direction: "up" },
+  { key: "ejaculatory_control", label: "Ejaculatory Control", direction: "up" },
+  { key: "body_composition", label: "Body Composition", direction: "up" },
+  { key: "bp_control", label: "Blood Pressure Control", direction: "up" },
+  { key: "thyroid_symptom_load", label: "Thyroid Symptom Load", direction: "down" },
+  { key: "pcos_symptom_load", label: "PCOS Symptom Load", direction: "down" },
+  { key: "menopause_symptom_load", label: "Menopause Symptom Load", direction: "down" },
+  { key: "energy_stability", label: "Energy Stability", direction: "up" },
+  { key: "mood_stability", label: "Mood Stability", direction: "up" },
+  { key: "longevity_score", label: "Longevity Score", direction: "up" },
 ];
 
 // Concern booleans (higher frequency is worth investigating) and positive ones.
@@ -48,16 +58,30 @@ const POSITIVE_BOOLS: { key: string; label: string }[] = [
 ];
 
 // Curated correlation pairs (avoids p-hacking explosion). label + optional template.
+// Full Root Cause set per docs/13 §2.4 (Sleep x Libido, Sleep x Recovery, Sleep x
+// Erections, Weight x Confidence, Exercise x Libido, Anxiety x Symptoms, Recovery x
+// Sexual Health, Waist/Body x Health Metrics).
 const PAIRS: { a: string; b: string; templateId?: string }[] = [
   { a: "sleep_quality", b: "energy", templateId: "sleep-vs-energy" },
   { a: "sleep_quality", b: "mood" },
   { a: "sleep_quality", b: "libido" },
+  { a: "sleep_score", b: "libido" },
+  { a: "sleep_score", b: "recovery_score" },
+  { a: "sleep_score", b: "erectile_function" },
   { a: "exercised", b: "libido", templateId: "exercise-vs-libido" },
+  { a: "exercised", b: "recovery_score" },
   { a: "alcohol_units", b: "sleep_quality", templateId: "alcohol-vs-sleep" },
+  { a: "alcohol_units", b: "recovery_score" },
   { a: "caffeine_mg", b: "sleep_quality", templateId: "caffeine-vs-sleep" },
   { a: "anxiety", b: "sleep_quality" },
+  { a: "anxiety", b: "thyroid_symptom_load" },
+  { a: "anxiety", b: "pain" },
   { a: "steps", b: "mood" },
   { a: "stress", b: "recovery_score" },
+  { a: "recovery_score", b: "sexual_confidence" },
+  { a: "body_composition", b: "confidence" },
+  { a: "body_composition", b: "bp_control" },
+  { a: "mood_stability", b: "energy_stability" },
 ];
 
 const LABELS: Record<string, string> = {
@@ -201,6 +225,31 @@ export async function runDetectiveScan(
     });
   }
 
+  // --- Longitudinal regime changes (docs/14 §2.2) ---
+  // With enough history, compare the first vs second half of the window. A large
+  // shift in the mean is surfaced as a possibility-framed regime change.
+  const MIN_LONGITUDINAL = 28;
+  for (const v of [...INDEX_VARS, ...SCALE_VARS]) {
+    const s = series[v.key];
+    if (!s || s.length < MIN_LONGITUDINAL) continue;
+    const mid = Math.floor(s.length / 2);
+    const firstMean = mean(s.slice(0, mid).map((d) => d.value));
+    const secondMean = mean(s.slice(mid).map((d) => d.value));
+    if (firstMean === 0) continue;
+    const shift = Math.round(((secondMean - firstMean) / Math.abs(firstMean)) * 100);
+    if (Math.abs(shift) < 15) continue;
+    const good = v.direction === "up" ? shift > 0 : shift < 0;
+    const dirWord = shift > 0 ? "higher" : "lower";
+    observations.push({
+      text: `Over the longer term, your ${v.label} has settled ${Math.abs(shift)}% ${dirWord} than earlier in this window.`,
+      isPositive: good,
+      sourceMetrics: [v.key],
+      sampleSize: s.length,
+      windowStart, windowEnd,
+      stage: "pattern",
+    });
+  }
+
   // --- Correlations (min 21) ---
   for (const pair of PAIRS) {
     const sa = series[pair.a];
@@ -218,8 +267,10 @@ export async function runDetectiveScan(
     const dir = coef > 0 ? "higher" : "lower";
     persistedCorrelations.push({ a: pair.a, b: pair.b, coefficient: round2(coef), level, n: xs.length });
 
+    // Adaptive experiment duration (docs/14 §2.2): sparser data => longer window.
+    const adaptiveDuration = xs.length >= 40 ? 14 : xs.length >= 28 ? 21 : 28;
     const next: SuggestedNextStep = pair.templateId
-      ? { type: "experiment", templateId: pair.templateId, durationDays: 14 }
+      ? { type: "experiment", templateId: pair.templateId, durationDays: adaptiveDuration }
       : { type: "observation", label: "Keep logging to confirm this relationship." };
 
     hypotheses.push({
@@ -353,6 +404,9 @@ export async function runDetectiveScan(
 
 function cap(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function mean(xs: number[]): number {
+  return xs.length === 0 ? 0 : xs.reduce((a, b) => a + b, 0) / xs.length;
 }
 function round2(n: number): number {
   return Math.round(n * 100) / 100;

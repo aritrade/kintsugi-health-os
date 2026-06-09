@@ -27,10 +27,14 @@ export function ReportsClient({
   const [busy, setBusy] = useState(false);
   const hasBaseline = observations >= 7;
 
-  async function generate() {
+  async function generate(period: string) {
     setBusy(true);
     try {
-      const res = await fetch("/api/v1/reports", { method: "POST" });
+      const res = await fetch("/api/v1/reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ period }),
+      });
       if (res.ok) router.refresh();
     } finally {
       setBusy(false);
@@ -47,14 +51,18 @@ export function ReportsClient({
       </header>
 
       <Card>
-        <CardContent className="flex items-center justify-between gap-4 py-4">
+        <CardContent className="space-y-3 py-4">
           <div>
-            <p className="font-medium">This week&apos;s report</p>
+            <p className="font-medium">Generate a report</p>
             <p className="text-sm text-muted-foreground">Trends, findings, open questions, and momentum.</p>
           </div>
-          <Button size="sm" onClick={generate} disabled={busy || !hasBaseline}>
-            {busy ? "Generating..." : "Generate"}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            {["weekly", "monthly", "quarterly", "annual"].map((p) => (
+              <Button key={p} size="sm" variant="outline" onClick={() => generate(p)} disabled={busy || !hasBaseline}>
+                {p[0].toUpperCase() + p.slice(1)}
+              </Button>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
@@ -83,8 +91,8 @@ function ReportCard({ report }: { report: ReportRow }) {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">
-          Week of {c.periodStart} → {c.periodEnd}
+        <CardTitle className="text-base capitalize">
+          {report.period} · {c.periodStart} → {c.periodEnd}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 text-sm">
@@ -146,6 +154,15 @@ function ReportCard({ report }: { report: ReportRow }) {
             </p>
             <ul className="list-disc space-y-0.5 pl-5 text-muted-foreground">
               {c.openQuestions.map((q, i) => <li key={i}>{q}</li>)}
+            </ul>
+          </div>
+        )}
+
+        {c.carryover && c.carryover.length > 0 && (
+          <div>
+            <p className="mb-1 font-medium">Carried over from last report</p>
+            <ul className="list-disc space-y-0.5 pl-5 text-muted-foreground">
+              {c.carryover.map((q, i) => <li key={i}>{q}</li>)}
             </ul>
           </div>
         )}

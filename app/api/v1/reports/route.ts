@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { apiError, authed } from "@/server/http";
-import { buildWeeklyReport } from "@/server/reports/weekly";
+import { buildReport, type ReportPeriod } from "@/server/reports/weekly";
+
+const VALID_PERIODS: ReportPeriod[] = ["weekly", "monthly", "quarterly", "annual"];
 
 // GET /api/v1/reports?period=weekly - list generated reports.
 export async function GET(req: Request) {
@@ -24,16 +26,24 @@ export async function GET(req: Request) {
 
 // POST /api/v1/reports/generate would normally be its own route; we accept POST
 // here to generate a weekly report and persist it.
-export async function POST() {
+export async function POST(req: Request) {
   const { supabase, user } = await authed();
   if (!user) return apiError("unauthenticated", "Sign in required.", 401);
 
-  const content = await buildWeeklyReport(supabase, user.id);
+  let period: ReportPeriod = "weekly";
+  try {
+    const body = await req.json();
+    if (body?.period && VALID_PERIODS.includes(body.period)) period = body.period;
+  } catch {
+    // default to weekly when no body
+  }
+
+  const content = await buildReport(supabase, user.id, period);
   const { data, error } = await supabase
     .from("reports")
     .insert({
       user_id: user.id,
-      period: "weekly",
+      period,
       period_start: content.periodStart,
       period_end: content.periodEnd,
       content,
