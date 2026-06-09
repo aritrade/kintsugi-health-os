@@ -1,8 +1,13 @@
 // Lab-report OCR + structured extraction.
-// Uses Google's free Gemma 3 (12B) vision model via the Gemini API when
+// Uses Google's free Gemma 4 vision models via the hosted Gemini API when
 // GEMINI_API_KEY is configured; otherwise returns `available: false` so the UI
 // falls back to manual confirmation/entry. Extracted values are never trusted
 // until the user confirms (docs/07 section 6).
+//
+// Note: Gemma 4 12B is currently a local-only release; the hosted Gemini API
+// exposes gemma-4-26b-a4b-it (MoE, ~4B active) and gemma-4-31b-it. We default to
+// the 26b-a4b MoE (fast + free) and allow overriding via GEMMA_OCR_MODEL,
+// e.g. set it to gemma-4-12b-it once that lands on the hosted API.
 
 export interface ExtractedLab {
   name: string;
@@ -21,7 +26,7 @@ export interface OcrResult {
 }
 
 const IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-const DEFAULT_MODEL = "gemma-3-12b-it";
+const DEFAULT_MODEL = "gemma-4-26b-a4b-it";
 
 const PROMPT = `You are a careful medical-document transcriber. Extract laboratory biomarker
 results from this image. Respond with ONLY a JSON object (no markdown, no prose) of the form:
