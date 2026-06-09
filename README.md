@@ -12,7 +12,46 @@
 
 A privacy-first **Personal Health Operating System** that helps people become the primary investigator of their own health journey — through structured observation, evidence collection, experimentation, timeline reconstruction, pattern discovery, and healthcare preparation.
 
+<p align="center">
+  <a href="https://kintsugi-health-os.vercel.app">
+    <img src="docs/assets/overview.gif" alt="Kintsugi Health OS — a quick look at the product" width="900">
+  </a>
+</p>
+
+<p align="center"><em>A quick look — dashboard &amp; Health Momentum, the Health Detective, the knowledge graph, multi-cadence reports, the case builder, and the AI assistant. <a href="https://kintsugi-health-os.vercel.app">Try the live demo →</a></em></p>
+
 > **Investigation, not diagnosis.** The platform never diagnoses, prescribes, recommends medication changes, or routes around your physician. Every AI-assisted output passes through a safety guardrail layer and carries a non-diagnostic disclaimer. See [docs/01-prd.md](docs/01-prd.md) and [docs/24-product-principles.md](docs/24-product-principles.md).
+
+---
+
+## Why Kintsugi Health OS
+
+**Kintsugi (金継ぎ)** is the Japanese art of mending broken pottery with gold — treating the cracks as part of an object's history rather than something to hide. Your health works the same way: the dips, the unexplained symptoms, the scattered lab PDFs are not noise to discard — they are the story that explains how you got here. **Kintsugi Health OS turns that fragmented history into something whole, legible, and yours.**
+
+### The problem
+
+Health data today is **fragmented, episodic, and owned by everyone but you.** Symptoms surface between 10-minute appointments. Lab results sit in email and three different portals. No single doctor sees the whole picture, and most tracking apps just pile on more numbers — amplifying anxiety instead of resolving it. When something feels off, you're left googling symptoms at midnight with no structured way to investigate.
+
+### The shift
+
+Kintsugi reframes your relationship with your own health from **anxious patient** to **calm investigator.** Instead of asking "what's wrong with me?", it helps you ask better questions — *what changed, what correlates, what's worth testing, and what should I bring to my doctor?* — and answers them with your own longitudinal evidence.
+
+### What makes it different
+
+| | Typical tracking / health apps | **Kintsugi Health OS** |
+| --- | --- | --- |
+| **Framing** | Scores, streaks, and alerts | Investigation — patterns framed as questions, never verdicts |
+| **Trust** | Black-box AI that can hallucinate | **Deterministic** analysis behind a safety **guardrail** layer; explainable & reproducible |
+| **Tone** | Often anxiety-amplifying | Anti-anxiety by design; calm, non-alarmist |
+| **Ownership** | Vendor-locked, sold, or siloed | **Patient-owned** — full export + irreversible delete, privacy-first |
+| **Scope** | One domain (sleep *or* cycle *or* labs) | Modular **Investigation Packs** unify sleep, sexual & women's health, labs, longevity & more |
+| **Output** | A dashboard you stare at | A **doctor-ready case** you walk into the appointment with |
+
+### Why now
+
+Wearables, at-home labs, and capable open/on-device models have made rich personal health data abundant — but there is still no **calm, patient-owned synthesis layer** that turns it into understanding without overstepping into diagnosis. Kintsugi is that layer.
+
+> **In one line:** Kintsugi is the system of record for *understanding yourself* — investigation, not diagnosis; evidence, not anxiety; owned by you, not your vendors.
 
 ---
 
@@ -189,6 +228,15 @@ See [docs/10-security-design.md](docs/10-security-design.md), [docs/16-complianc
 New Investigation Packs are added as self-contained modules implementing a `PackDefinition` (metrics + deterministic index formulas), then registered and surfaced in the marketplace. Packs pass a safety review gate before being marked verified. See [docs/27-pack-sdk.md](docs/27-pack-sdk.md).
 
 ---
+
+## Pitch, brand & explainer
+
+Marketing and product-positioning materials live alongside the code:
+
+- **Pitch deck** — [docs/pitch-deck.pdf](docs/pitch-deck.pdf) (rendered) · [docs/pitch-deck.html](docs/pitch-deck.html) (interactive, self-contained). 13 slides: problem → brand insight → solution → differentiation → personas → market → business model → moat → traction → ask.
+- **Explainer video script & storyboard** — [docs/explainer-script.md](docs/explainer-script.md): a production-ready ~90s VO + shot list to screen-record against the live demo.
+- **Brand:** *Kintsugi (金継ぎ)* — mending what's broken with gold. Visual language is "gold seams on dark." Category position: **"Investigation, not diagnosis"** — calm, credible, patient-owned, anti-anxiety.
+- **Positioning one-liner:** *Kintsugi turns your scattered health data into understanding you own.*
 
 ## Documentation
 

@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kintsugi Health OS — Pitch Deck</title>
+<style>
+  :root{
+    --ink:#14120f; --ink2:#1d1a16; --paper:#f4eee2; --muted:#b7ac98;
+    --gold:#d7a94b; --gold-soft:#e7c781; --green:#3ecf8e; --line:rgba(215,169,75,.32);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#0c0b09;color:var(--paper);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .serif{font-family:Georgia,"Times New Roman",serif}
+  .deck{display:flex;flex-direction:column;align-items:center;gap:26px;padding:34px 16px 70px}
+  .slide{position:relative;width:1280px;max-width:100%;aspect-ratio:16/9;background:
+      radial-gradient(120% 140% at 0% 0%, #201c17 0%, var(--ink) 55%, #100e0b 100%);
+    border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    box-shadow:0 24px 70px rgba(0,0,0,.5)}
+  .pad{position:absolute;inset:0;padding:64px 72px;display:flex;flex-direction:column}
+  /* kintsugi gold seam */
+  .seam{position:absolute;background:linear-gradient(90deg,transparent,var(--gold-soft),var(--gold),transparent);
+    height:2px;opacity:.7}
+  .seam.v{width:2px;background:linear-gradient(180deg,transparent,var(--gold),transparent)}
+  .eyebrow{letter-spacing:.32em;text-transform:uppercase;font-size:13px;color:var(--gold);font-weight:700}
+  h1{font-size:62px;line-height:1.02;margin:.18em 0 0;font-weight:700}
+  h2{font-size:40px;line-height:1.08;margin:.1em 0 .35em;font-weight:700}
+  .lead{font-size:21px;line-height:1.5;color:#e9e1d1;max-width:60ch}
+  .muted{color:var(--muted)}
+  .foot{position:absolute;left:72px;right:72px;bottom:30px;display:flex;justify-content:space-between;
+    align-items:center;font-size:12px;color:var(--muted);letter-spacing:.04em}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-right:9px}
+  .grid{display:grid;gap:18px;margin-top:8px}
+  .g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:rgba(244,238,226,.04);border:1px solid rgba(244,238,226,.10);border-radius:12px;padding:20px 22px}
+  .card h3{margin:0 0 6px;font-size:18px;color:var(--gold-soft)}
+  .card p{margin:0;font-size:15px;line-height:1.45;color:#ddd4c2}
+  .big{font-size:40px;font-weight:700;color:var(--paper)}
+  table{width:100%;border-collapse:collapse;font-size:15px;margin-top:6px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid rgba(244,238,226,.10);vertical-align:top}
+  th{color:var(--gold);font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+  td.k{color:var(--muted);width:24%}
+  .pill{display:inline-block;border:1px solid var(--line);color:var(--gold-soft);border-radius:999px;
+    padding:5px 12px;font-size:12.5px;margin:0 7px 7px 0}
+  .row{display:flex;gap:14px;flex-wrap:wrap}
+  ul.clean{margin:.2em 0 0;padding-left:1.1em}ul.clean li{margin:.42em 0;font-size:17px;line-height:1.42;color:#e4dbca}
+  .kpi{display:flex;gap:26px;margin-top:14px;flex-wrap:wrap}
+  .kpi div{min-width:150px}.kpi .n{font-size:34px;font-weight:700;color:var(--gold-soft)}
+  .kpi .l{font-size:13px;color:var(--muted)}
+  .shot{margin-top:14px;border:1px solid var(--line);border-radius:12px;width:100%;max-height:420px;object-fit:cover;object-position:top}
+  .center{justify-content:center}
+  a{color:var(--gold-soft)}
+  .wordmark{font-size:22px;font-weight:700;letter-spacing:.02em}
+  .wordmark .g{color:var(--gold)}
+  @media print{
+    @page{size:1280px 720px;margin:0}
+    html,body{background:#0c0b09}
+    .deck{display:block;gap:0;padding:0}
+    .slide{width:1280px;height:720px;max-width:none;aspect-ratio:auto;border:0;border-radius:0;
+      box-shadow:none;break-after:page;page-break-after:always}
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- 1 — Cover -->
+  <section class="slide">
+    <div class="seam" style="top:0;left:8%;right:8%"></div>
+    <div class="seam v" style="top:12%;bottom:12%;left:64px"></div>
+    <div class="pad center">
+      <div class="eyebrow">Personal Health Operating System</div>
+      <h1 class="serif">Kintsugi <span style="color:var(--gold)">Health OS</span></h1>
+      <p class="lead" style="margin-top:18px;font-size:24px">
+        Become the primary investigator of your own health.
+        <br><strong>Investigation, not diagnosis.</strong>
+      </p>
+      <div class="row" style="margin-top:26px">
+        <span class="pill">Privacy-first &amp; patient-owned</span>
+        <span class="pill">Deterministic + guardrailed</span>
+        <span class="pill">Live demo, fully built</span>
+      </div>
+    </div>
+    <div class="foot"><span><span class="dot"></span>kintsugi-health-os.vercel.app</span><span>01</span></div>
+  </section>
+
+  <!-- 2 — Problem -->
+  <section class="slide">
+    <div class="seam" style="top:0;left:0;right:40%"></div>
+    <div class="pad">
+      <div class="eyebrow">The problem</div>
+      <h2 class="serif">Your health data is fragmented, episodic, and owned by everyone but you.</h2>
+      <div class="grid g2" style="margin-top:10px">
+        <div class="card"><h3>10-minute medicine</h3><p>Symptoms surface between rushed appointments. No single doctor sees the whole picture.</p></div>
+        <div class="card"><h3>Scattered records</h3><p>Lab PDFs in email and three portals; no longitudinal view across years or sources.</p></div>
+        <div class="card"><h3>Anxiety, amplified</h3><p>Most trackers pile on numbers and alerts — fueling midnight symptom-googling, not clarity.</p></div>
+        <div class="card"><h3>Embarrassing to raise</h3><p>Sexual, mental, and reproductive health are hard to articulate in a 10-minute visit.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span><span class="dot"></span>Kintsugi Health OS</span><span>02</span></div>
+  </section>
+
+  <!-- 3 — Brand insight -->
+  <section class="slide">
+    <div class="seam v" style="top:0;bottom:0;left:46%"></div>
+    <div class="pad center">
+      <div class="eyebrow">The insight</div>
+      <h2 class="serif" style="font-size:46px;max-width:20ch">Kintsugi (金継ぎ): mend what's broken with gold.</h2>
+      <p class="lead" style="font-size:22px">
+        The Japanese art of repairing pottery with gold treats the cracks as part of the story —
+        not something to hide. Your health is the same: the dips, the unexplained symptoms, the
+        scattered results are the <strong>evidence</strong> that explains how you got here.
+      </p>
+      <p class="lead" style="margin-top:16px;color:var(--gold-soft)">
+        Kintsugi turns a fragmented history into something whole, legible, and yours.
+      </p>
+    </div>
+    <div class="foot"><span><span class="dot"></span>Brand &amp; positioning</span><span>03</span></div>
+  </section>
+
+  <!-- 4 — Solution -->
+  <section class="slide">
+    <div class="seam" style="top:0;left:30%;right:0"></div>
+    <div class="pad">
+      <div class="eyebrow">The solution</div>
+      <h2 class="serif">A calm, patient-owned operating system for understanding yourself.</h2>
+      <div class="grid g3" style="margin-top:10px">
+        <div class="card"><h3>Observe</h3><p>A sub-90-second daily check-in plus timeline and memory build a longitudinal record.</p></div>
+        <div class="card"><h3>Investigate</h3><p>A deterministic Detective surfaces trends &amp; correlations as questions — never verdicts.</p></div>
+        <div class="card"><h3>Prepare</h3><p>Turn evidence into a doctor-ready case so 10 minutes with a specialist actually count.</p></div>
+      </div>
+      <p class="lead" style="margin-top:18px">
+        Modular <strong>Investigation Packs</strong> unify sleep, sexual &amp; women's health, labs, longevity and more —
+        all behind a safety guardrail layer.
+      </p>
+    </div>
+    <div class="foot"><span><span class="dot"></span>Kintsugi Health OS</span><span>04</span></div>
+  </section>
+
+  <!-- 5 — The loop -->
+  <section class="slide">
+    <div class="pad">
+      <div class="eyebrow">How it works</div>
+      <h2 class="serif">The investigation loop</h2>
+      <div class="grid g4" style="margin-top:14px">
+        <div class="card"><div class="big">1</div><h3>Capture</h3><p>Check-in, timeline, vault, labs &amp; wearables via a vendor-neutral metric layer.</p></div>
+        <div class="card"><div class="big">2</div><h3>Investigate</h3><p>Detective + experiments find patterns, correlations &amp; regime changes — explainably.</p></div>
+        <div class="card"><div class="big">3</div><h3>Understand</h3><p>Health Momentum, knowledge graph, and the AI Historian make it make sense.</p></div>
+        <div class="card"><div class="big">4</div><h3>Prepare</h3><p>Multi-cadence reports &amp; a specialist-tailored case to bring to the appointment.</p></div>
+      </div>
+      <p class="lead muted" style="margin-top:16px">The product compounds: the longer you use it, the more valuable it becomes.</p>
+    </div>
+    <div class="foot"><span><span class="dot"></span>Product</span><span>05</span></div>
+  </section>
+
+  <!-- 6 — Product at a glance -->
+  <section class="slide">
+    <div class="pad">
+      <div class="eyebrow">Product at a glance</div>
+      <h2 class="serif" style="margin-bottom:6px">Built, deployed, and explorable today.</h2>
+      <img class="shot" src="assets/overview.gif" alt="Kintsugi product screens" />
+    </div>
+    <div class="foot"><span><span class="dot"></span>Live demo: demo@kintsugi.health</span><span>06</span></div>
+  </section>
+
+  <!-- 7 — Differentiation -->
+  <section class="slide">
+    <div class="pad">
+      <div class="eyebrow">Why we win</div>
+      <h2 class="serif">Different on the axes that build trust.</h2>
+      <table>
+        <tr><th></th><th>Typical tracking / health apps</th><th>Kintsugi Health OS</th></tr>
+        <tr><td class="k">Framing</td><td>Scores, streaks, alerts</td><td>Investigation — patterns as questions</td></tr>
+        <tr><td class="k">Trust</td><td>Black-box AI that can hallucinate</td><td><strong>Deterministic</strong> analysis + guardrail layer</td></tr>
+        <tr><td class="k">Tone</td><td>Often anxiety-amplifying</td><td>Anti-anxiety by design</td></tr>
+        <tr><td class="k">Ownership</td><td>Vendor-locked / data sold</td><td><strong>Patient-owned</strong>: export + delete, always</td></tr>
+        <tr><td class="k">Scope</td><td>One domain</td><td>Modular packs across many domains</td></tr>
+        <tr><td class="k">Output</td><td>A dashboard to stare at</td><td>A <strong>doctor-ready case</strong></td></tr>
+      </table>
+    </div>
+    <div class="foot"><span><span class="dot"></span>Differentiation</span><span>07</span></div>
+  </section>
+
+  <!-- 8 — Personas -->
+  <section class="slide">
+    <div class="pad">
+      <div class="eyebrow">Who it's for</div>
+      <h2 class="serif">One architecture, five investigators.</h2>
+      <div class="grid g3" style="margin-top:8px">
+        <div class="card"><h3>The Founder Investigator</h3><p>Sexual health &amp; sleep, tracked without shame; a urologist-ready case.</p></div>
+        <div class="card"><h3>The Unexplained-Symptoms Seeker</h3><p>Reconstruct years of symptoms; see what correlates with fatigue.</p></div>
+        <div class="card"><h3>The Anxious Tracker</h3><p>A calm, non-alarmist read — findings as questions to investigate.</p></div>
+        <div class="card"><h3>The Women's-Health Investigator</h3><p>PCOS, fertility &amp; menopause with extra protection for sensitive data.</p></div>
+        <div class="card"><h3>The Longevity Optimizer</h3><p>Rigorous N-of-1 experiments across wearables, labs &amp; lifestyle.</p></div>
+        <div class="card" style="border-color:var(--line)"><h3 style="color:var(--gold)">The wedge</h3><p>Win the high-intent, under-served investigator — then expand by pack.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span><span class="dot"></span>Market</span><span>08</span></div>
+  </section>
+
+  <!-- 9 — Market & why now -->
+  <section class="slide">
+    <div class="seam" style="top:0;left:0;right:55%"></div>
+    <div class="pad">
+      <div class="eyebrow">Why now</div>
+      <h2 class="serif">Abundant personal health data — no calm place to make sense of it.</h2>
+      <ul class="clean">
+        <li>Wearables &amp; at-home labs made longitudinal personal data <strong>abundant</strong>.</li>
+        <li>Capable open / on-device models make <strong>private, low-cost</strong> intelligence feasible.</li>
+        <li>Trust in data-harvesting health apps is <strong>eroding</strong> — privacy is now a feature, not a footnote.</li>
+        <li>Yet there is still <strong>no patient-owned synthesis layer</strong> that stops short of diagnosis.</li>
+      </ul>
+      <div class="kpi">
+        <div><div class="n">11</div><div class="l">Investigation Packs shipped</div></div>
+        <div><div class="n">7</div><div class="l">wearable adapters</div></div>
+        <div><div class="n">100%</div><div class="l">user-owned &amp; exportable</div></div>
+      </div>
+    </div>
+    <div class="foot"><span><span class="dot"></span>Kintsugi Health OS</span><span>09</span></div>
+  </section>
+
+  <!-- 10 — Business model -->
+  <section class="slide">
+    <div class="pad">
+      <div class="eyebrow">Business model</div>
+      <h2 class="serif">The user is the customer — never the product.</h2>
+      <div class="grid g3" style="margin-top:8px">
+        <div class="card"><h3>Free, forever</h3><p>Core OS, basic Detective, weekly reports — and export &amp; delete are <strong>never</strong> paywalled.</p></div>
+        <div class="card"><h3>Premium ~$12–20/mo</h3><p>All packs, full AI suite, wearable sync, monthly→annual reports, larger vault.</p></div>
+        <div class="card"><h3>Pack marketplace</h3><p>Specialized &amp; community packs (rev-share) — each passes a safety review gate.</p></div>
+      </div>
+      <p class="lead muted" style="margin-top:16px">
+        Later, opt-in <strong>clinician-prep B2B2C</strong>: clinics sponsor premium; the patient stays the data owner.
+        No data sale. No health-targeted ads. Ever.
+      </p>
+    </div>
+    <div class="foot"><span><span class="dot"></span>Monetization</span><span>10</span></div>
+  </section>
+
+  <!-- 11 — Moat -->
+  <section class="slide">
+    <div class="pad">
+      <div class="eyebrow">Defensibility</div>
+      <h2 class="serif">A moat that compounds with trust and time.</h2>
+      <div class="grid g2" style="margin-top:8px">
+        <div class="card"><h3>Longitudinal data, owned by the user</h3><p>Switching cost grows with every check-in; the record only gets richer.</p></div>
+        <div class="card"><h3>Pack SDK ecosystem</h3><p>A safety-gated marketplace turns new domains into a contributor network, not a roadmap bottleneck.</p></div>
+        <div class="card"><h3>Trust &amp; safety as product</h3><p>Deterministic + guardrailed analysis is hard to copy without rebuilding the philosophy.</p></div>
+        <div class="card"><h3>Brand</h3><p>"Investigation, not diagnosis" owns a calm, credible category position in a noisy market.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span><span class="dot"></span>Kintsugi Health OS</span><span>11</span></div>
+  </section>
+
+  <!-- 12 — Status & roadmap -->
+  <section class="slide">
+    <div class="pad">
+      <div class="eyebrow">Status &amp; roadmap</div>
+      <h2 class="serif">Not a concept — a working product.</h2>
+      <ul class="clean">
+        <li><strong>Shipped:</strong> MVP (M0–M6) + Phase 2 (intelligence &amp; integrations) + Phase 3 (marketplace &amp; scale).</li>
+        <li><strong>Live demo</strong> with 12 weeks of synthetic data; validated architecture (verdict: GO).</li>
+        <li><strong>Next:</strong> turn on Premium &amp; integrations with an early cohort; open the pack marketplace.</li>
+        <li><strong>Then:</strong> explore consent-gated clinician-prep partnerships.</li>
+      </ul>
+      <div class="row" style="margin-top:18px">
+        <span class="pill">Next.js 15 · React 19</span><span class="pill">Supabase · RLS</span>
+        <span class="pill">Deterministic engines</span><span class="pill">Vercel deploy</span>
+      </div>
+    </div>
+    <div class="foot"><span><span class="dot"></span>Traction</span><span>12</span></div>
+  </section>
+
+  <!-- 13 — Ask / CTA -->
+  <section class="slide">
+    <div class="seam" style="bottom:0;left:8%;right:8%"></div>
+    <div class="pad center">
+      <div class="wordmark">Kintsugi<span class="g"> Health OS</span></div>
+      <h2 class="serif" style="font-size:46px;margin-top:18px">Help people read their own story — in gold.</h2>
+      <p class="lead" style="font-size:22px">
+        Try the live demo, or partner with us to bring calm, evidence-based,
+        patient-owned health investigation to the people who need it most.
+      </p>
+      <p class="lead" style="margin-top:18px;color:var(--gold-soft)">
+        kintsugi-health-os.vercel.app &nbsp;·&nbsp; demo@kintsugi.health
+      </p>
+    </div>
+    <div class="foot"><span><span class="dot"></span>Investigation, not diagnosis.</span><span>13</span></div>
+  </section>
+
+</div>
+</body>
+</html>
