@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function LandingPage() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center gap-8 px-6 text-center">
+    <main className="relative mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center gap-8 px-6 text-center">
+      <ThemeToggle className="absolute right-4 top-4 bg-card" />
       <div className="space-y-4">
         <p className="text-sm font-medium uppercase tracking-widest text-primary">
           Kintsugi Health OS

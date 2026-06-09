@@ -131,7 +131,7 @@ export default async function DashboardPage() {
           <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
             Your indices
           </h2>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {latestIndices.map((idx) => (
               <Card key={idx.kind}>
                 <CardContent className="py-4">
@@ -164,7 +164,7 @@ export default async function DashboardPage() {
         </Card>
       )}
 
-      <section className="grid grid-cols-2 gap-3">
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         <Link href="/timeline">
           <Card className="h-full transition-colors hover:bg-muted">
             <CardContent className="py-4">
