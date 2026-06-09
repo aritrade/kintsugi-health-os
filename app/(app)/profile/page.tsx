@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SignOutButton } from "@/components/sign-out-button";
 import { DataOwnership } from "@/components/account/data-ownership";
 import { FeedbackCard } from "@/components/feedback/feedback-card";
+import { isDemoEmail } from "@/lib/demo";
 
 const PRIVACY_LABELS: Record<string, string> = {
   standard: "Standard",
@@ -52,7 +53,7 @@ export default async function ProfilePage() {
 
       <FeedbackCard />
 
-      <DataOwnership />
+      <DataOwnership isDemo={isDemoEmail(user?.email)} />
 
       <Card>
         <CardHeader>

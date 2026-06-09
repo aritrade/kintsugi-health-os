@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createClient as createSbClient } from "@supabase/supabase-js";
 import { apiError, authed } from "@/server/http";
 import { purgeUserStorage, hardDeleteAccount } from "@/server/account/delete";
+import { isDemoEmail } from "@/lib/demo";
 
 const DeleteSchema = z.object({
   password: z.string().min(1),
@@ -15,6 +16,11 @@ export async function DELETE(req: Request) {
   const { supabase, user } = await authed();
   if (!user) return apiError("unauthenticated", "Sign in required.", 401);
   if (!user.email) return apiError("invalid_account", "Account has no email to verify.", 400);
+
+  // The shared public demo account cannot be deleted (it is for everyone to explore).
+  if (isDemoEmail(user.email)) {
+    return apiError("demo_protected", "The demo account cannot be deleted.", 403);
+  }
 
   let body: unknown;
   try {

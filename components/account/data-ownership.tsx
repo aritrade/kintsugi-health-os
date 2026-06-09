@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Download, ShieldAlert } from "lucide-react";
 
-export function DataOwnership() {
+export function DataOwnership({ isDemo = false }: { isDemo?: boolean }) {
   const [confirming, setConfirming] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmText, setConfirmText] = useState("");
@@ -66,7 +66,12 @@ export function DataOwnership() {
             undone.
           </p>
 
-          {!confirming ? (
+          {isDemo ? (
+            <p className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-muted-foreground dark:bg-red-950/30">
+              This is the shared demo account, so deletion is disabled. Create your own account to try
+              the full data-ownership controls.
+            </p>
+          ) : !confirming ? (
             <Button size="sm" variant="destructive" onClick={() => setConfirming(true)}>
               Delete my account
             </Button>

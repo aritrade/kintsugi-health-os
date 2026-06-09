@@ -49,12 +49,12 @@ export interface KnowledgeGraph {
 export async function rebuildGraph(supabase: SupabaseClient, userId: string): Promise<KnowledgeGraph> {
   const { data: correlations } = await supabase
     .from("correlations")
-    .select("variable_a, variable_b, coefficient, created_at")
+    .select("variable_a, variable_b, coefficient, window_end")
     .eq("user_id", userId)
-    .order("created_at", { ascending: false })
+    .order("window_end", { ascending: false })
     .limit(500);
 
-  // Keep the most recent correlation per unordered pair.
+  // Keep the most recent correlation per unordered pair (latest window first).
   const latest = new Map<string, { a: string; b: string; coef: number }>();
   for (const c of correlations ?? []) {
     const a = c.variable_a as string;
