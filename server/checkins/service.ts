@@ -4,6 +4,7 @@ import type { CheckinCore, CheckinPayload } from "@/types/checkin";
 import { getPack } from "@/packs/registry";
 import { getActivePackMetrics } from "@/server/packs/active";
 import { BASELINE_MIN_OBSERVATIONS } from "@/packs/normalize";
+import { computeMomentum } from "@/server/momentum/engine";
 
 // Maps the camelCase payload to the snake_case `checkins` columns.
 const CORE_COLUMN_MAP: Record<string, string> = {
@@ -95,6 +96,13 @@ export async function saveCheckin(
   }
 
   const recomputedIndices = await recomputeIndicesForDate(supabase, userId, date, biologicalSex);
+  // Momentum recompute runs alongside index recomputation (docs/25 section 7).
+  // Best-effort: a momentum failure must never block a check-in save.
+  try {
+    await computeMomentum(supabase, userId);
+  } catch {
+    // swallow - momentum is non-critical to capture
+  }
   return { checkin, recomputedIndices };
 }
 

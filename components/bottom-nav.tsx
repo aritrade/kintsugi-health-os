@@ -16,7 +16,7 @@ const tabs = [
 export function BottomNav() {
   const pathname = usePathname();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-10 border-t bg-card">
+    <nav className="fixed inset-x-0 bottom-0 z-10 border-t bg-card print:hidden">
       <div className="mx-auto flex max-w-2xl items-center justify-around">
         {tabs.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);

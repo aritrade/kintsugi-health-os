@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { INDEX_LABELS } from "@/lib/index-labels";
 import { BASELINE_MIN_OBSERVATIONS } from "@/packs/normalize";
-import { ClipboardCheck, Check } from "lucide-react";
+import { ClipboardCheck, Check, Sparkles } from "lucide-react";
 import type { IndexKind } from "@/types";
 
 export default async function DashboardPage() {
@@ -42,20 +42,31 @@ export default async function DashboardPage() {
 
   // Latest value per index kind (only meaningful once a baseline exists).
   const latestIndices: { kind: IndexKind; value: number }[] = [];
+  let momentum: { value: number; components: Record<string, number> } | null = null;
   if (hasBaseline) {
     const { data: indices } = await supabase
       .from("derived_indices")
-      .select("index_kind, value, index_date")
+      .select("index_kind, value, index_date, inputs")
       .eq("user_id", user!.id)
       .order("index_date", { ascending: false })
-      .limit(60);
+      .limit(120);
     const seen = new Set<string>();
     for (const row of indices ?? []) {
       if (seen.has(row.index_kind)) continue;
       seen.add(row.index_kind);
+      if (row.index_kind === "health_momentum") {
+        momentum = { value: Math.round(Number(row.value)), components: (row.inputs as Record<string, number>) ?? {} };
+        continue;
+      }
       latestIndices.push({ kind: row.index_kind as IndexKind, value: Math.round(Number(row.value)) });
     }
   }
+  const MOMENTUM_PARTS: { key: string; label: string }[] = [
+    { key: "consistency", label: "Consistency" },
+    { key: "physical_progress", label: "Physical" },
+    { key: "understanding", label: "Understanding" },
+    { key: "confidence", label: "Confidence" },
+  ];
 
   const greetingName = profile?.display_name ?? "there";
   const checkinDone = !!todayCheckin?.is_complete;
@@ -93,6 +104,27 @@ export default async function DashboardPage() {
           </Link>
         </CardContent>
       </Card>
+
+      {momentum && (
+        <Card>
+          <CardContent className="space-y-3 py-4">
+            <div className="flex items-baseline justify-between">
+              <p className="flex items-center gap-1.5 text-sm font-medium">
+                <Sparkles className="h-4 w-4 text-primary" /> Health Momentum
+              </p>
+              <p className="text-2xl font-semibold">{momentum.value}</p>
+            </div>
+            <div className="grid grid-cols-4 gap-2 text-center">
+              {MOMENTUM_PARTS.map((p) => (
+                <div key={p.key} className="rounded-md bg-muted py-2">
+                  <p className="text-sm font-semibold">{momentum!.components[p.key] ?? "—"}</p>
+                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{p.label}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {hasBaseline && latestIndices.length > 0 ? (
         <section className="space-y-3">
@@ -146,6 +178,22 @@ export default async function DashboardPage() {
             <CardContent className="py-4">
               <p className="font-medium">Memory</p>
               <p className="text-sm text-muted-foreground">Notes &amp; questions</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/reports">
+          <Card className="h-full transition-colors hover:bg-muted">
+            <CardContent className="py-4">
+              <p className="font-medium">Reports</p>
+              <p className="text-sm text-muted-foreground">Weekly summaries</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/cases">
+          <Card className="h-full transition-colors hover:bg-muted">
+            <CardContent className="py-4">
+              <p className="font-medium">Case Builder</p>
+              <p className="text-sm text-muted-foreground">For appointments</p>
             </CardContent>
           </Card>
         </Link>
