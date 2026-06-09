@@ -13,29 +13,21 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("display_name")
-    .eq("user_id", user!.id)
-    .maybeSingle();
-
-  const { data: activations } = await supabase
-    .from("pack_activations")
-    .select("is_enabled, pack_definitions(name, slug)")
-    .eq("is_enabled", true);
-
   const today = new Date().toISOString().slice(0, 10);
-  const { data: todayCheckin } = await supabase
-    .from("checkins")
-    .select("is_complete")
-    .eq("user_id", user!.id)
-    .eq("checkin_date", today)
-    .maybeSingle();
 
-  const { count: checkinCount } = await supabase
-    .from("checkins")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user!.id);
+  // Run the independent reads concurrently to cut round-trip latency.
+  const [{ data: profile }, { data: activations }, { data: todayCheckin }, { count: checkinCount }] =
+    await Promise.all([
+      supabase.from("profiles").select("display_name").eq("user_id", user!.id).maybeSingle(),
+      supabase.from("pack_activations").select("is_enabled, pack_definitions(name, slug)").eq("is_enabled", true),
+      supabase
+        .from("checkins")
+        .select("is_complete")
+        .eq("user_id", user!.id)
+        .eq("checkin_date", today)
+        .maybeSingle(),
+      supabase.from("checkins").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
+    ]);
 
   const observations = checkinCount ?? 0;
   const hasBaseline = observations >= BASELINE_MIN_OBSERVATIONS;
