@@ -1,5 +1,15 @@
 # Kintsugi Health OS
 
+![mode](https://img.shields.io/badge/mode-demo-2563eb)
+![data](https://img.shields.io/badge/data-synthetic-16a34a)
+![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ecf8e?logo=supabase&logoColor=white)
+![deploy](https://img.shields.io/badge/deploy-Vercel-000000?logo=vercel&logoColor=white)
+![AI](https://img.shields.io/badge/AI-deterministic%20%2B%20guardrailed-7c3aed)
+![license](https://img.shields.io/badge/license-All%20Rights%20Reserved-dc2626)
+
 A privacy-first **Personal Health Operating System** that helps people become the primary investigator of their own health journey — through structured observation, evidence collection, experimentation, timeline reconstruction, pattern discovery, and healthcare preparation.
 
 > **Investigation, not diagnosis.** The platform never diagnoses, prescribes, recommends medication changes, or routes around your physician. Every AI-assisted output passes through a safety guardrail layer and carries a non-diagnostic disclaimer. See [docs/01-prd.md](docs/01-prd.md) and [docs/24-product-principles.md](docs/24-product-principles.md).
@@ -18,21 +28,21 @@ The demo account is guarded against deletion so it stays available for everyone.
 
 ---
 
-## Status
+## Project phases
 
-The pre-implementation blueprint is complete and validated ([docs/26-architecture-validation.md](docs/26-architecture-validation.md), verdict: **GO**), and the product is **fully implemented and deployed**:
+How this came together. The public build is a live, sanitized **synthetic-data** version of the product — see [Try the live demo](#try-the-live-demo).
 
-| Phase | Scope | State |
-| --- | --- | --- |
-| **M0** | Foundations: scaffold, DB schema + RLS, auth, onboarding, pack eligibility engine | Done |
-| **M1** | Capture: Daily Check-in, Health Timeline, Health Memory | Done |
-| **M2** | Records & Labs: Medical Vault, Lab Intelligence, vision OCR | Done |
-| **M3** | Investigation Packs & derived indices | Done |
-| **M4** | Health Detective (deterministic patterns/correlations) & Experiment Engine | Done |
-| **M5** | Health Momentum, Reports, Case Builder | Done |
-| **M6** | Hardening & data ownership (export + hard delete) | Done |
-| **Phase 2** | Canonical metric layer, wearable adapters, AI suite, knowledge graph, expanded reports, more packs | Done |
-| **Phase 3** | Pack marketplace + SDK, additional packs, scale/reliability indexes, lab range localization | Done |
+- **M0 — Foundations.** Next.js scaffold, PostgreSQL schema + Row Level Security, auth, onboarding, and the Investigation Pack eligibility engine.
+- **M1 — Capture.** Daily Check-in, Health Timeline, and Health Memory.
+- **M2 — Records & Labs.** Medical Vault, Lab Intelligence, and confirm-before-trust vision OCR.
+- **M3 — Packs & indices.** Investigation Packs contributing metrics and deterministic derived indices.
+- **M4 — Detective & experiments.** Deterministic trend/correlation discovery (Pearson), longitudinal regime detection, and N-of-1 experiments.
+- **M5 — Sense-making.** Health Momentum score, multi-cadence Reports, and the Case Builder.
+- **M6 — Hardening & data ownership.** Full machine-readable export and irreversible hard delete.
+- **Phase 2 — Richer intelligence.** Canonical metric layer + wearable adapters, the AI Assistant suite, knowledge graph, and expanded reporting.
+- **Phase 3 — Platform expansion.** Pack marketplace + SDK, additional packs, scale/reliability indexes, and lab reference-range localization.
+
+> **Status:** fully implemented and deployed. Blueprint validated in [docs/26-architecture-validation.md](docs/26-architecture-validation.md) (verdict: **GO**).
 
 ---
 
@@ -186,6 +196,10 @@ The complete specification suite (28 documents — PRD, personas, journeys, IA, 
 
 ---
 
-## Disclaimer
+## License & disclaimer
 
-Kintsugi helps you observe and organize your own health data. It is **not** a medical device, does not provide medical advice, and does not replace professional care. Always discuss health concerns with a qualified clinician. In an emergency, contact local emergency services.
+© 2026 Aritra De. **All rights reserved.** — see [LICENSE](LICENSE).
+
+This software and its source code are proprietary and confidential. No part may be copied, modified, distributed, sublicensed, or used — in whole or in part — without the prior written permission of the copyright holder.
+
+**Medical disclaimer.** Kintsugi helps you observe and organize your own health data. It is **not** a medical device, does not provide medical advice, diagnosis, or treatment, and does not replace professional care. Always discuss health concerns with a qualified clinician. In an emergency, contact your local emergency services.
