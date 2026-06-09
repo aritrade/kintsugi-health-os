@@ -229,14 +229,30 @@ New Investigation Packs are added as self-contained modules implementing a `Pack
 
 ---
 
-## Pitch, brand & explainer
+## Pitch deck
 
-Marketing and product-positioning materials live alongside the code:
+A self-contained, on-brand investor/partner deck — *"gold seams on dark,"* echoing the kintsugi metaphor.
 
-- **Pitch deck** — [docs/pitch-deck.pdf](docs/pitch-deck.pdf) (rendered) · [docs/pitch-deck.html](docs/pitch-deck.html) (interactive, self-contained). 13 slides: problem → brand insight → solution → differentiation → personas → market → business model → moat → traction → ask.
-- **Explainer video script & storyboard** — [docs/explainer-script.md](docs/explainer-script.md): a production-ready ~90s VO + shot list to screen-record against the live demo.
-- **Brand:** *Kintsugi (金継ぎ)* — mending what's broken with gold. Visual language is "gold seams on dark." Category position: **"Investigation, not diagnosis"** — calm, credible, patient-owned, anti-anxiety.
-- **Positioning one-liner:** *Kintsugi turns your scattered health data into understanding you own.*
+- **[View the deck (PDF) →](docs/pitch-deck.pdf)** · interactive HTML: [docs/pitch-deck.html](docs/pitch-deck.html)
+- **13 slides:** problem → brand insight → solution → investigation loop → product → differentiation → personas → market & why-now → business model → moat → traction → the ask.
+- **Positioning one-liner:** *Kintsugi turns your scattered health data into understanding you own — investigation, not diagnosis.*
+
+## Explainer video
+
+A ~50-second narrated, animated explainer (1080p) — neutral English male voiceover, professionally animated transitions, and real product footage.
+
+<p align="center">
+  <a href="docs/explainer.mp4">
+    <img src="docs/assets/explainer-poster.png" alt="Watch the Kintsugi Health OS explainer" width="900">
+  </a>
+</p>
+
+<p align="center">
+  <a href="docs/explainer.mp4"><strong>▶ Watch the explainer (MP4)</strong></a>
+  &nbsp;·&nbsp; script &amp; storyboard: <a href="docs/explainer-script.md">docs/explainer-script.md</a>
+</p>
+
+> Brand note: *Kintsugi (金継ぎ)* — mending what's broken with gold. Category position: **"Investigation, not diagnosis"** — calm, credible, patient-owned, anti-anxiety.
 
 ## Documentation
 
