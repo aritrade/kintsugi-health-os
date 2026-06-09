@@ -1,10 +1,12 @@
 // Lab-report OCR + structured extraction.
 //
-// Provider priority (privacy-first):
+// Provider priority (privacy-first; Gemma is the primary model):
 //   1. Self-hosted Ollama (OLLAMA_BASE_URL) running Gemma 4 12B - images never
 //      leave your own infrastructure. Preferred for a health app.
 //   2. Hosted Gemini API (GEMINI_API_KEY) with a free Gemma 4 vision model.
-//   3. No provider -> available:false, UI falls back to manual entry.
+//   3. Claude vision (ANTHROPIC_API_KEY) - last-resort fallback only, used when
+//      no Gemma tier is configured or both are unreachable/errored.
+//   4. No provider -> available:false, UI falls back to manual entry.
 //
 // Extracted values are never trusted until the user confirms (docs/07 section 6).
 
@@ -27,6 +29,7 @@ export interface OcrResult {
 const IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 const HOSTED_DEFAULT_MODEL = "gemma-4-26b-a4b-it"; // hosted Gemini API (12B is local-only today)
 const OLLAMA_DEFAULT_MODEL = "gemma4:12b"; // true Gemma 4 12B on your own box
+const CLAUDE_DEFAULT_MODEL = "claude-3-5-sonnet-latest"; // vision-capable; override via CLAUDE_OCR_MODEL
 
 const PROMPT = `You are a careful medical-document transcriber. Extract laboratory biomarker
 results from this image. Respond with ONLY a JSON object (no markdown, no prose) of the form:
@@ -119,10 +122,55 @@ async function extractViaGemini(base64: string, mimeType?: string): Promise<OcrR
   return { available: true, results: toResults(parseJsonLoose(text)), rawText: text };
 }
 
+// Claude only accepts jpeg/png/gif/webp; normalize the loose "image/jpg" alias.
+function claudeMediaType(mimeType?: string): string {
+  const m = (mimeType || "image/png").toLowerCase();
+  return m === "image/jpg" ? "image/jpeg" : m;
+}
+
+// Claude vision (ANTHROPIC_API_KEY) - last-resort fallback only. Gemma stays the
+// primary model; this path runs solely when no Gemma tier succeeded. Uses the
+// REST API directly to match the dependency-free fetch pattern above.
+async function extractViaClaude(base64: string, mimeType?: string): Promise<OcrResult> {
+  const apiKey = process.env.ANTHROPIC_API_KEY!;
+  const model = process.env.CLAUDE_OCR_MODEL || CLAUDE_DEFAULT_MODEL;
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 1024,
+      temperature: 0,
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: claudeMediaType(mimeType), data: base64 } },
+            { type: "text", text: PROMPT },
+          ],
+        },
+      ],
+    }),
+  });
+  if (!res.ok) return { available: false, reason: `claude_error_${res.status}`, results: [] };
+  const json = await res.json();
+  const blocks: { type?: string; text?: string }[] = json?.content ?? [];
+  const text: string = blocks
+    .filter((b) => b.type === "text")
+    .map((b) => b.text ?? "")
+    .join("");
+  return { available: true, results: toResults(parseJsonLoose(text)), rawText: text };
+}
+
 export async function extractLabs(signedUrl: string, mimeType?: string): Promise<OcrResult> {
   const hasOllama = !!process.env.OLLAMA_BASE_URL;
   const hasGemini = !!process.env.GEMINI_API_KEY;
-  if (!hasOllama && !hasGemini) return { available: false, reason: "no_ocr_provider", results: [] };
+  const hasClaude = !!process.env.ANTHROPIC_API_KEY;
+  if (!hasOllama && !hasGemini && !hasClaude) return { available: false, reason: "no_ocr_provider", results: [] };
   if (mimeType && !IMAGE_TYPES.includes(mimeType)) {
     // Vision needs an image; PDFs require pre-rasterization (future milestone).
     return { available: false, reason: "unsupported_for_ocr", results: [] };
@@ -132,12 +180,18 @@ export async function extractLabs(signedUrl: string, mimeType?: string): Promise
     const base64 = await fetchBase64(signedUrl);
     if (!base64) return { available: false, reason: "fetch_failed", results: [] };
 
+    // Tier 1 (primary): self-hosted Gemma - images never leave your own infra.
     if (hasOllama) {
       const r = await extractViaOllama(base64);
-      // Fall back to hosted Gemini if the self-hosted box is unreachable/errored.
-      if (r.available || !hasGemini) return r;
+      if (r.available || (!hasGemini && !hasClaude)) return r;
     }
-    return await extractViaGemini(base64, mimeType);
+    // Tier 2: hosted Gemma (Gemini API).
+    if (hasGemini) {
+      const r = await extractViaGemini(base64, mimeType);
+      if (r.available || !hasClaude) return r;
+    }
+    // Tier 3: Claude vision - last-resort fallback.
+    return await extractViaClaude(base64, mimeType);
   } catch (e) {
     return { available: false, reason: `ocr_failed:${(e as Error).message}`, results: [] };
   }

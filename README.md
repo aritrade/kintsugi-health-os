@@ -153,7 +153,7 @@ How this came together. The public build is a live, sanitized **synthetic-data**
 - **TailwindCSS** + shadcn-style UI primitives · responsive shell (desktop sidebar / mobile bottom nav) · **dark mode** (no-flash, system-aware)
 - **Supabase** — PostgreSQL + Auth + Storage, with Row Level Security on all user-owned data
 - **Zustand** (state) · **Recharts** (charts) · **Zod** (validation)
-- **AI** — the Detective, Historian, Research, and Appointment engines are **deterministic** (no black-box LLM in the analysis path) and run behind a safety **guardrail layer** (`ai/guardrails.ts`). The only vision/LLM dependency is optional lab **OCR** via Gemma 4 (self-hosted Ollama preferred; hosted Gemini fallback).
+- **AI** — the Detective, Historian, Research, and Appointment engines are **deterministic** (no black-box LLM in the analysis path) and run behind a safety **guardrail layer** (`ai/guardrails.ts`). The only vision/LLM dependency is lab **OCR**, which uses a privacy-first model cascade: **Gemma 4 is primary** (self-hosted Ollama — images stay on your infra), then **hosted Gemma** (Gemini API), then **Claude vision** as a last-resort fallback. OCR is optional; with no provider, the UI falls back to manual entry.
 - **Hosting** — Vercel (app) + Supabase (data) with GitHub auto-deploys on `main`.
 
 ---
@@ -200,8 +200,9 @@ npm run seed:demo            # populates demo@kintsugi.health with ~12 weeks of 
 | `NEXT_PUBLIC_SUPABASE_URL` | yes | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | yes | Supabase anon key (client) |
 | `SUPABASE_SERVICE_ROLE_KEY` | server | Privileged server operations (never exposed to the client) |
-| `OLLAMA_BASE_URL` / `OLLAMA_OCR_TOKEN` / `OLLAMA_OCR_MODEL` | optional | Self-hosted Gemma 4 OCR (images stay on your infra — preferred) |
-| `GEMINI_API_KEY` / `GEMMA_OCR_MODEL` | optional | Hosted Gemma 4 vision OCR fallback |
+| `OLLAMA_BASE_URL` / `OLLAMA_OCR_TOKEN` / `OLLAMA_OCR_MODEL` | optional | **Primary** OCR: self-hosted Gemma 4 (images stay on your infra) |
+| `GEMINI_API_KEY` / `GEMMA_OCR_MODEL` | optional | Fallback OCR: hosted Gemma 4 vision |
+| `ANTHROPIC_API_KEY` / `CLAUDE_OCR_MODEL` | optional | Last-resort OCR fallback: Claude vision (used only if no Gemma tier succeeds) |
 
 OCR is optional: with no provider configured, the UI cleanly falls back to manual lab entry.
 
