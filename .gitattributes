@@ -1,0 +1,20 @@
+# GitHub's repo/pinned card language label is auto-computed by Linguist from the
+# code in the repo. We intentionally exclude source extensions from language
+# detection so the card leads with the project's positioning rather than a
+# generic "TypeScript" label. This is cosmetic only — it does not hide, ignore,
+# or alter any files, and it is fully reversible by deleting this file.
+*.ts    linguist-detectable=false
+*.tsx   linguist-detectable=false
+*.js    linguist-detectable=false
+*.jsx   linguist-detectable=false
+*.mjs   linguist-detectable=false
+*.cjs   linguist-detectable=false
+*.css   linguist-detectable=false
+*.scss  linguist-detectable=false
+*.sql   linguist-detectable=false
+*.html  linguist-detectable=false
+*.json  linguist-detectable=false
+
+# Treat marketing/asset docs as documentation so they never become the label.
+docs/**          linguist-documentation
+docs/assets/**   linguist-vendored
