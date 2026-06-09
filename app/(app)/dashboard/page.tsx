@@ -132,6 +132,25 @@ export default async function DashboardPage() {
         </Card>
       )}
 
+      <section className="grid grid-cols-2 gap-3">
+        <Link href="/timeline">
+          <Card className="h-full transition-colors hover:bg-muted">
+            <CardContent className="py-4">
+              <p className="font-medium">Timeline</p>
+              <p className="text-sm text-muted-foreground">Your health history</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/memory">
+          <Card className="h-full transition-colors hover:bg-muted">
+            <CardContent className="py-4">
+              <p className="font-medium">Memory</p>
+              <p className="text-sm text-muted-foreground">Notes &amp; questions</p>
+            </CardContent>
+          </Card>
+        </Link>
+      </section>
+
       <section className="space-y-3">
         <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
           Active Investigation Packs
