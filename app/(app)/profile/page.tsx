@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SignOutButton } from "@/components/sign-out-button";
+import { DataOwnership } from "@/components/account/data-ownership";
 
 const PRIVACY_LABELS: Record<string, string> = {
   standard: "Standard",
@@ -36,12 +37,13 @@ export default async function ProfilePage() {
         </CardContent>
       </Card>
 
+      <DataOwnership />
+
       <Card>
         <CardHeader>
-          <CardTitle>Your data</CardTitle>
+          <CardTitle>Session</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm text-muted-foreground">
-          <p>You own your data. Full export and deletion arrive in milestone M5.</p>
+        <CardContent className="text-sm">
           <SignOutButton />
         </CardContent>
       </Card>
