@@ -37,6 +37,9 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/auth") ||
     path === "/";
 
+  // API routes enforce their own auth and return JSON 401s; never redirect them.
+  if (path.startsWith("/api")) return response;
+
   // Unauthenticated users hitting an app route -> login.
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
