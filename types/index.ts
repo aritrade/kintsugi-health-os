@@ -119,3 +119,103 @@ export interface DerivedIndex {
   value: number; // normalized 0..100
   inputs: Record<string, number>;
 }
+
+// --- Health Detective + Experiments (docs/19, docs/07 section 11) ---
+
+export type InsightStage =
+  | "observation"
+  | "pattern"
+  | "correlation"
+  | "hypothesis"
+  | "question"
+  | "experiment";
+export type InsightStatus = "active" | "superseded" | "contradicted";
+export type ConfidenceLevel = "Low" | "Moderate" | "High" | "Very High";
+
+export interface GuardrailFlag {
+  rule: string; // e.g. "diagnosis", "prescription", "causation"
+  matched: string; // the offending fragment (for audit)
+  action: "reframed" | "blocked";
+}
+
+export interface Hypothesis {
+  statement: string; // possibility language only (docs/19 section 9)
+  confidence: number; // 0..1
+  supportingSignals: string[];
+}
+
+export interface SuggestedNextStep {
+  type: "experiment" | "observation";
+  templateId?: string;
+  durationDays?: number;
+  label?: string;
+}
+
+// Canonical 5-part Detective insight (docs/19 section 7).
+export interface Insight {
+  id: UUID;
+  stage: InsightStage;
+  status: InsightStatus;
+  observation: string;
+  investigationQuestion?: string;
+  suggestedNextStep: SuggestedNextStep;
+  sourceMetrics: string[];
+  sampleSize?: number;
+  windowStart?: ISODate;
+  windowEnd?: ISODate;
+  confidenceLevel?: ConfidenceLevel;
+  coefficient?: number;
+  isPositive: boolean;
+  createdAt: ISODateTime;
+}
+
+// Unified AI response envelope (docs/07 section 10).
+export interface AiResponse {
+  system: AiSystem;
+  observations: string[];
+  questions: string[];
+  hypotheses: Hypothesis[];
+  disclaimers: string[];
+  guardrailFlags: GuardrailFlag[];
+  emergency?: boolean;
+}
+
+export interface Correlation {
+  id: UUID;
+  variableA: string;
+  variableB: string;
+  coefficient: number;
+  confidence: ConfidenceLevel;
+  sampleSize: number;
+  windowStart: ISODate;
+  windowEnd: ISODate;
+  hypothesis?: string;
+}
+
+export interface ExperimentTemplate {
+  id: string;
+  title: string;
+  question: string;
+  hypothesis: string; // possibility language
+  variables: Record<string, unknown>;
+  metrics: string[]; // tracked metric/index slugs
+  durationDays: number;
+  successCriteria: string;
+}
+
+export interface Experiment {
+  id: UUID;
+  question: string;
+  hypothesis: string;
+  variables: Record<string, unknown>;
+  metrics: string[];
+  durationDays: number;
+  successCriteria?: string;
+  status: ExperimentStatus;
+  startedAt?: ISODate;
+  endedAt?: ISODate;
+  results?: Record<string, unknown>;
+  conclusion?: string;
+  confidence?: number;
+  createdAt: ISODateTime;
+}
