@@ -13,6 +13,7 @@ import {
   Sparkles,
   Share2,
   Activity,
+  Apple,
   User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ const items = [
   { href: "/dashboard", label: "Home", icon: Home },
   { href: "/checkin", label: "Check-in", icon: ClipboardCheck },
   { href: "/investigate", label: "Investigate", icon: Search },
+  { href: "/nutrition", label: "Nutrition", icon: Apple },
   { href: "/records", label: "Records", icon: FolderOpen },
   { href: "/reports", label: "Reports", icon: FileText },
   { href: "/cases", label: "Cases", icon: Briefcase },

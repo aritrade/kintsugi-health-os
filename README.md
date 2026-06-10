@@ -139,6 +139,13 @@ How this came together. The public build is a live, sanitized **synthetic-data**
 - **Case Builder** — a specialist-tailored, evidence-based summary you can hand to a clinician.
 - **AI Assistant suite** — Health Historian (narrative reconstruction), Research Assistant (evidence-graded explanations), and Appointment Prep — all deterministic and guardrailed.
 
+**Nutrition Intelligence** (deterministic, evidence-first)
+- A curated, evidence-graded **Nutrition Knowledge Graph** (nutrients ↔ foods ↔ symptoms ↔ conditions ↔ lab markers ↔ mechanisms) — including Indian / **West Bengal** staples (rohu, hilsa, mustard greens, paneer, curd, sesame) alongside global foods.
+- **Assessment → Recommendation → Why → Evidence → Safety → Meal Plan → Outcome** pipeline. Suspected nutrient factors come from lab-threshold crossings, symptom weights, and condition/goal mappings — each with a confidence score and a transparent reasoning chain. **No LLM in the analysis path.**
+- A **“Why am I being told this?”** drill-down on every recommendation (the gap, the food’s contribution, the mechanism, the evidence grade A–E, and the confidence).
+- A **Safety Engine** validates every suggestion against your allergies, **medication interactions**, and condition-based restrictions (e.g. potassium in CKD), and offers safer alternatives — before anything is shown.
+- A **deterministic, guardrailed Nutrition Copilot**: education-framed, **nutrients-first** (“foods that provide calcium include…”), never “treat / cure / dose”. Outcomes are tracked against your own check-in and lab trends.
+
 **Integrations**
 - A vendor-independent **canonical metric layer** with adapters for Oura, Whoop, Garmin, Fitbit, Ultrahuman, Apple Health, and Google Fit. Quality-aware deduplication (device > lab > user > OCR). Sample-data loader for testing without a device.
 
@@ -153,7 +160,7 @@ How this came together. The public build is a live, sanitized **synthetic-data**
 - **TailwindCSS** + shadcn-style UI primitives · responsive shell (desktop sidebar / mobile bottom nav) · **dark mode** (no-flash, system-aware)
 - **Supabase** — PostgreSQL + Auth + Storage, with Row Level Security on all user-owned data
 - **Zustand** (state) · **Recharts** (charts) · **Zod** (validation)
-- **AI** — the Detective, Historian, Research, and Appointment engines are **deterministic** (no black-box LLM in the analysis path) and run behind a safety **guardrail layer** (`ai/guardrails.ts`). The only vision/LLM dependency is lab **OCR**, which uses a privacy-first model cascade: **Gemma 4 is primary** (self-hosted Ollama — images stay on your infra), then **hosted Gemma** (Gemini API), then **Claude vision** as a last-resort fallback. OCR is optional; with no provider, the UI falls back to manual entry.
+- **AI** — the Detective, Historian, Research, Appointment, and **Nutrition** engines are **deterministic** (no black-box LLM in the analysis path) and run behind a safety **guardrail layer** (`ai/guardrails.ts` + `ai/nutrition-guardrails.ts`). The only vision/LLM dependency is lab **OCR**, which uses a privacy-first model cascade: **Gemma 4 is primary** (self-hosted Ollama — images stay on your infra), then **hosted Gemma** (Gemini API), then **Claude vision** as a last-resort fallback. OCR is optional; with no provider, the UI falls back to manual entry.
 - **Hosting** — Vercel (app) + Supabase (data) with GitHub auto-deploys on `main`.
 
 ---
@@ -185,6 +192,8 @@ SQL migrations live in `supabase/migrations/`. Apply them in order via the Supab
 0006_phase_packs.sql        Phase 2/3 pack + metric definitions
 0007_index_kinds.sql        new derived-index enum values
 0008_cohort_scale.sql       feedback, region, performance indexes
+0009_nutrition.sql          Nutrition Knowledge Graph + user tables + RLS
+0010_nutrition_seed.sql     curated nutrition catalog seed (global + West Bengal)
 ```
 
 ### Seed the demo account (optional)
@@ -215,7 +224,7 @@ See [docs/08-folder-structure.md](docs/08-folder-structure.md). High level:
 - `app/` — routes + API (App Router); `(auth)`, `(app)`, and `api/v1/*`
 - `packs/` — Investigation Packs (plugin modules + index formulas)
 - `ai/` — guardrail layer + lab OCR
-- `server/` — server-only services (checkins, detective, momentum, reports, cases, graph, canonical, integrations, account, AI engines)
+- `server/` — server-only services (checkins, detective, momentum, reports, cases, graph, canonical, integrations, account, AI engines, **nutrition**)
 - `components/` — UI primitives + feature components
 - `lib/`, `stores/`, `types/` — cross-cutting libraries, Zustand stores, canonical types
 - `supabase/` — migrations, policies, seed
@@ -234,6 +243,7 @@ See [docs/08-folder-structure.md](docs/08-folder-structure.md). High level:
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run verify:guardrails` | Regression test for the Detective + guardrails |
+| `npm run verify:nutrition` | Regression test for the Nutrition engine + guardrails |
 | `npm run verify:m5` | Authenticated E2E for Momentum / Reports / Cases |
 | `npm run verify:m6` | Verifies RLS + data-ownership (export/delete) |
 | `npm run seed:demo` | (Re)seed the public demo account |

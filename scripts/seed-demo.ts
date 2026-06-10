@@ -16,6 +16,12 @@ import { buildReport } from "@/server/reports/weekly";
 import { buildCaseContent } from "@/server/cases/build";
 import { ingestCanonical } from "@/server/canonical/ingest";
 import type { CanonicalMetricValue } from "@/types/canonical";
+import { loadKnowledgeGraph } from "@/server/nutrition/knowledge";
+import { runAssessment } from "@/server/nutrition/assessment";
+import { buildRecommendations } from "@/server/nutrition/recommend";
+import { buildMealPlan } from "@/server/nutrition/mealplan";
+import { computeOutcomes } from "@/server/nutrition/outcomes";
+import { getNutritionProfile } from "@/server/nutrition/profile";
 
 function loadEnv() {
   const candidates = [process.env.E2E_ENV_FILE, ".env.local", "/tmp/kintsugi.env"].filter(Boolean) as string[];
@@ -123,6 +129,14 @@ async function wipe(sb: SupabaseClient, userId: string) {
     "graph_edges",
     "graph_nodes",
     "integration_connections",
+    // Nutrition (children first; FKs also cascade, but be explicit).
+    "recommendation_history",
+    "nutrition_recommendations",
+    "meal_plans",
+    "nutrition_outcomes",
+    "nutrition_assessments",
+    "nutrition_medications",
+    "nutrition_profiles",
   ];
   for (const t of tables) await sb.from(t).delete().eq("user_id", userId);
 }
@@ -324,6 +338,92 @@ async function main() {
     user_id: userId, title: "Sexual Health & Sleep - Urology Prep", specialist: "Urologist", content: caseContent,
   });
   console.log("[ok] experiments + reports + case created");
+
+  // --- Nutrition Intelligence Engine demo data --------------------------------
+  // Requires migrations 0009/0010 (catalog) to be applied. Skips gracefully if not.
+  const kg = await loadKnowledgeGraph(sb);
+  if (kg.nutrients.size === 0) {
+    console.log("[skip] nutrition catalog not found - apply 0009/0010 migrations to seed nutrition demo data");
+  } else {
+    await sb.from("nutrition_profiles").upsert(
+      {
+        user_id: userId,
+        diet_type: "pescatarian",
+        region: "West Bengal",
+        cultural_prefs: ["bengali", "indian"],
+        allergies: [],
+        goals: ["improve bone health", "more energy"],
+        conditions: [],
+      },
+      { onConflict: "user_id" },
+    );
+    await sb.from("nutrition_medications").insert({ user_id: userId, name: "levothyroxine", drug_class: "levothyroxine" });
+    const profile = await getNutritionProfile(sb, userId);
+
+    const nInput = {
+      symptoms: ["fatigue", "muscle cramps"],
+      labs: { vitamin_d: 18, ferritin: 25 },
+      goals: ["improve bone health"],
+      conditions: [],
+      medications: ["levothyroxine"],
+    };
+    const nResult = runAssessment(kg, nInput);
+    const { data: nAssess } = await sb
+      .from("nutrition_assessments")
+      .insert({ user_id: userId, inputs: nInput, suspected_factors: nResult.suspectedFactors, reasoning: nResult.reasoning })
+      .select("id")
+      .single();
+
+    const nRecs = buildRecommendations(kg, nResult.suspectedFactors, profile, { medications: ["levothyroxine"] });
+    if (nRecs.length > 0 && nAssess) {
+      const { data: insertedRecs } = await sb
+        .from("nutrition_recommendations")
+        .insert(
+          nRecs.map((r) => ({
+            user_id: userId,
+            assessment_id: nAssess.id,
+            nutrient_slug: r.nutrientSlug,
+            food_slug: r.foodSlug,
+            food_name: r.foodName,
+            why: r.why,
+            mechanism: r.mechanism,
+            evidence_grade: r.evidenceGrade,
+            confidence: r.confidence,
+            safety_status: r.safetyStatus,
+            safer_alternatives: r.saferAlternatives,
+            explanation: r.explanation,
+          })),
+        )
+        .select("id");
+      await sb.from("recommendation_history").insert(
+        (insertedRecs ?? []).map((row) => ({ user_id: userId, recommendation_id: row.id, action: "shown" })),
+      );
+    }
+
+    const targets = nResult.suspectedFactors.slice(0, 4).map((f) => f.nutrientSlug);
+    if (targets.length > 0 && nAssess) {
+      const plan = buildMealPlan(kg, targets, profile);
+      await sb.from("meal_plans").insert({ user_id: userId, assessment_id: nAssess.id, target_nutrients: targets, plan });
+    }
+
+    if (nAssess) {
+      const outcomes = await computeOutcomes(sb, userId, nResult.suspectedFactors, 56);
+      if (outcomes.deltas.length > 0) {
+        await sb.from("nutrition_outcomes").insert(
+          outcomes.deltas.map((d) => ({
+            user_id: userId,
+            assessment_id: nAssess.id,
+            metric: d.metric,
+            baseline: d.baseline,
+            follow_up: d.followUp,
+            window_start: outcomes.windowStart,
+            window_end: outcomes.windowEnd,
+          })),
+        );
+      }
+    }
+    console.log(`[ok] nutrition: ${nResult.suspectedFactors.length} factors, ${nRecs.length} recommendations`);
+  }
 
   console.log("\nDEMO SEED COMPLETE");
 }

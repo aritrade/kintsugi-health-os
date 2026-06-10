@@ -10,6 +10,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "verify:guardrails": "tsx scripts/verify-detective.ts",
+    "verify:nutrition": "tsx scripts/verify-nutrition.ts",
     "verify:m5": "tsx scripts/e2e-m5.ts",
     "verify:m6": "tsx scripts/verify-m6.ts",
     "seed:demo": "tsx scripts/seed-demo.ts"

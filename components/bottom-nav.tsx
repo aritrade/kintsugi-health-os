@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ClipboardCheck, Search, FolderOpen, User } from "lucide-react";
+import { Home, ClipboardCheck, Search, Apple, FolderOpen, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
   { href: "/dashboard", label: "Home", icon: Home },
   { href: "/checkin", label: "Check-in", icon: ClipboardCheck },
   { href: "/investigate", label: "Investigate", icon: Search },
+  { href: "/nutrition", label: "Nutrition", icon: Apple },
   { href: "/records", label: "Records", icon: FolderOpen },
   { href: "/profile", label: "Profile", icon: User },
 ] as const;

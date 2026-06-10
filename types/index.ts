@@ -29,7 +29,8 @@ export type AiSystem =
   | "research"
   | "appointment_prep"
   | "experiment_designer"
-  | "root_cause";
+  | "root_cause"
+  | "nutrition";
 export type MetricKind = "scale" | "boolean" | "duration" | "count" | "numeric" | "text";
 export type IndexKind =
   | "libido"
