@@ -18,7 +18,7 @@ A privacy-first **Personal Health Operating System** that helps people become th
   </a>
 </p>
 
-<p align="center"><em>A quick look — dashboard &amp; Health Momentum, the Health Detective, the knowledge graph, multi-cadence reports, the case builder, and the AI assistant. <a href="https://kintsugi-health-os.vercel.app">Try the live demo →</a></em></p>
+<p align="center"><em>A quick look — dashboard &amp; Health Momentum, the Health Detective, the knowledge graph, the new Nutrition Intelligence engine (with the “why” behind every food), multi-cadence reports, the case builder, and the AI assistant. <a href="https://kintsugi-health-os.vercel.app">Try the live demo →</a></em></p>
 
 > **Investigation, not diagnosis.** The platform never diagnoses, prescribes, recommends medication changes, or routes around your physician. Every AI-assisted output passes through a safety guardrail layer and carries a non-diagnostic disclaimer. See [docs/01-prd.md](docs/01-prd.md) and [docs/24-product-principles.md](docs/24-product-principles.md).
 
@@ -55,9 +55,44 @@ Wearables, at-home labs, and capable open/on-device models have made rich person
 
 ---
 
+## The story, the intent, the audience, the brand
+
+### The story — why it exists
+
+This began as a personal frustration: health that lives in the gaps. A symptom that comes and goes, a lab value flagged in one portal and forgotten in another, a doctor who has ten minutes and none of your history. The information needed to understand your own body exists — it's just **scattered, episodic, and owned by everyone but you.** Every existing tool either piled on more anxiety-inducing numbers or locked your data behind a vendor. So Kintsugi was built around a different belief: **your health history is not noise to discard — it's the story that explains how you got here**, and you should be the one who can read it. The name says it plainly — *kintsugi*, mending what's broken with gold, treating the cracks as part of the whole.
+
+### What it actually is — product intent
+
+Kintsugi Health OS is a **privacy-first Personal Health Operating System**: a calm, patient-owned synthesis layer that turns fragmented health data into understanding. It is deliberately **not** a diagnosis engine, a coach, or another dashboard to feel guilty about. Its intent is to move you from *anxious patient* to *calm investigator* — capturing a longitudinal record, surfacing patterns **as questions, not verdicts**, letting you test theories with N-of-1 experiments, translating evidence into **deterministic, guardrailed** guidance (now including the **Nutrition Intelligence Engine** with a "why" behind every suggestion), and ending in a **doctor-ready case** so your ten minutes finally count. The non-negotiables: deterministic and explainable over black-box; anti-anxiety over alarmist; patient-owned over vendor-locked.
+
+### Who it's for — market fit & personas
+
+The wedge is the **high-intent, under-served self-investigator** — people already motivated to understand their health but failed by one-domain trackers and 10-minute medicine. Five personas, one architecture:
+
+| Persona | What they need | Where Kintsugi fits |
+| --- | --- | --- |
+| **The Founder Investigator** | Track sexual health & sleep without shame; arrive urology-ready | Sensitive-data packs + Case Builder |
+| **The Unexplained-Symptoms Seeker** | Reconstruct years of symptoms; find what correlates with fatigue | Timeline + Detective + **Nutrition** gaps |
+| **The Anxious Tracker** | A calm, non-alarmist read that resolves worry | Findings framed as questions; anti-anxiety tone |
+| **The Women's-Health Investigator** | PCOS, fertility & menopause with extra protection | Sensitive packs + RLS + cycle correlation |
+| **The Longevity Optimizer** | Rigorous experiments across wearables, labs & food | N-of-1 engine + canonical metrics + Nutrition |
+
+Go-to-market: win the investigator with a genuinely free, exportable core; expand by **Investigation Pack**; monetize via Premium and a safety-gated pack marketplace — **the user is the customer, never the product.**
+
+### How we show up — brand & positioning
+
+- **Category position:** *“Investigation, not diagnosis.”* Calm, credible, patient-owned, anti-anxiety — a deliberate counter to both fear-driven symptom search and hype-driven AI health.
+- **Brand metaphor:** *kintsugi (金継ぎ)* — gold seams on dark; the cracks are the story. The visual language is warm gold on near-black, unhurried, never clinical.
+- **Voice:** reassuring, intelligent, specific. We quantify ("n of m, over this window"), we use possibility language, and we never diagnose, prescribe, or alarm.
+- **Proof, not adjectives:** a fully built **live demo**, deterministic engines you can audit, and export/delete that's **never** paywalled. Trust is the product.
+
+> **In one line:** Kintsugi is the system of record for *understanding yourself* — investigation, not diagnosis; evidence, not anxiety; owned by you, not your vendors.
+
+---
+
 ## Try the live demo
 
-A fully populated, shared demo account is wired into the app so anyone can explore the product end-to-end with realistic, lived-in data (≈12 weeks of correlated check-ins, derived indices, detected correlations, a knowledge graph, experiments, reports, labs, and a doctor-ready case).
+A fully populated, shared demo account is wired into the app so anyone can explore the product end-to-end with realistic, lived-in data (≈12 weeks of correlated check-ins, derived indices, detected correlations, a knowledge graph, experiments, reports, labs, a **nutrition assessment with evidence-graded recommendations**, and a doctor-ready case).
 
 - **Live app:** https://kintsugi-health-os.vercel.app
 - **One-click:** open `/signup` or `/login` and press **“Explore the live demo.”**
@@ -67,17 +102,27 @@ The demo account is guarded against deletion so it stays available for everyone.
 
 ---
 
+## Use it on your phone
+
+Kintsugi is a fully installable **Progressive Web App**, and also ships as a **signed Android APK** built as a Trusted Web Activity (TWA).
+
+- **iPhone / iPad:** open the [live app](https://kintsugi-health-os.vercel.app) in Safari → **Share** → **Add to Home Screen**. It launches full-screen with its own icon and an offline shell.
+- **Android:** install the PWA from the browser’s **“Install app”** prompt, or sideload the signed TWA **APK**.
+- **One app, every feature.** The Android build is a thin TWA wrapper around the live deployment, so **everything in the web app — including the new Nutrition Intelligence engine — is available in the mobile app automatically**, with no separate release. New features appear the moment they deploy.
+
+---
+
 ## Pitch deck
 
 A self-contained, on-brand investor/partner deck — *"gold seams on dark,"* echoing the kintsugi metaphor.
 
 - **[View the deck (PDF) →](docs/pitch-deck.pdf)** · interactive HTML: [docs/pitch-deck.html](docs/pitch-deck.html)
-- **13 slides:** problem → brand insight → solution → investigation loop → product → differentiation → personas → market & why-now → business model → moat → traction → the ask.
+- **14 slides:** problem → brand insight → solution → investigation loop → product → **Nutrition Intelligence** → differentiation → personas → market & why-now → business model → moat → traction → the ask.
 - **Positioning one-liner:** *Kintsugi turns your scattered health data into understanding you own — investigation, not diagnosis.*
 
 ## Explainer video
 
-A ~55-second narrated, animated explainer (1080p) — neutral English voiceover for a global audience, professionally animated transitions, and real product footage.
+A narrated, animated explainer (1080p) — neutral English voiceover for a global audience, professionally animated transitions, and real product footage, now including the **Nutrition Intelligence** beat (evidence-based foods with the “why” and built-in safety checks).
 
 <p align="center">
   <a href="docs/explainer.mp4">
