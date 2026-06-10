@@ -9,6 +9,7 @@
 ![deploy](https://img.shields.io/badge/deploy-Vercel-000000?logo=vercel&logoColor=white)
 ![AI](https://img.shields.io/badge/AI-deterministic%20%2B%20guardrailed-7c3aed)
 ![license](https://img.shields.io/badge/license-All%20Rights%20Reserved-dc2626)
+[![Download APK](https://img.shields.io/badge/Download-Android%20APK-3ddc84?logo=android&logoColor=white)](https://github.com/aritrade/kintsugi-health-os/releases/latest)
 
 A privacy-first **Personal Health Operating System** that helps people become the primary investigator of their own health journey — through structured observation, evidence collection, experimentation, timeline reconstruction, pattern discovery, and healthcare preparation.
 
@@ -106,9 +107,15 @@ The demo account is guarded against deletion so it stays available for everyone.
 
 Kintsugi is a fully installable **Progressive Web App**, and also ships as a **signed Android APK** built as a Trusted Web Activity (TWA).
 
+<p align="center">
+  <a href="https://github.com/aritrade/kintsugi-health-os/releases/download/v1.0.0/kintsugi-health-os-v1.0.0.apk">
+    <img src="https://img.shields.io/badge/⬇%20Download-Android%20APK%20(v1.0.0)-3ddc84?style=for-the-badge&logo=android&logoColor=white" alt="Download the Android APK">
+  </a>
+</p>
+
+- **Android (APK):** **[Download the signed APK →](https://github.com/aritrade/kintsugi-health-os/releases/latest)** (from [Releases](https://github.com/aritrade/kintsugi-health-os/releases)), open it on your phone, and allow the install if prompted. Or install the PWA from Chrome’s **“Install app”** prompt.
 - **iPhone / iPad:** open the [live app](https://kintsugi-health-os.vercel.app) in Safari → **Share** → **Add to Home Screen**. It launches full-screen with its own icon and an offline shell.
-- **Android:** install the PWA from the browser’s **“Install app”** prompt, or sideload the signed TWA **APK**.
-- **One app, every feature.** The Android build is a thin TWA wrapper around the live deployment, so **everything in the web app — including the new Nutrition Intelligence engine — is available in the mobile app automatically**, with no separate release. New features appear the moment they deploy.
+- **One app, every feature.** The Android build is a thin TWA wrapper around the live deployment, so **everything in the web app — including the Nutrition Intelligence engine — is available in the mobile app automatically**, with no separate release. New features appear the moment they deploy.
 
 ---
 
