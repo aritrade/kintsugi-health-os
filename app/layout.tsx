@@ -1,15 +1,30 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { Pwa } from "@/components/pwa";
 
 export const metadata: Metadata = {
   title: "Kintsugi Health OS",
   description:
     "A privacy-first Personal Health Operating System. Investigation, not diagnosis.",
+  applicationName: "Kintsugi Health OS",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Kintsugi",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   themeColor: "#1f6f54",
 };
 
@@ -24,7 +39,10 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="min-h-screen antialiased">{children}</body>
+      <body className="min-h-screen antialiased">
+        {children}
+        <Pwa />
+      </body>
     </html>
   );
 }

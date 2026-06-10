@@ -35,6 +35,13 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/login") ||
     path.startsWith("/signup") ||
     path.startsWith("/auth") ||
+    // PWA + TWA assets must be reachable without a session (manifest, service
+    // worker, offline shell, icons, and the Android asset-links verification).
+    path.startsWith("/.well-known") ||
+    path.startsWith("/icons") ||
+    path === "/manifest.webmanifest" ||
+    path === "/sw.js" ||
+    path === "/offline" ||
     path === "/";
 
   // API routes enforce their own auth and return JSON 401s; never redirect them.
